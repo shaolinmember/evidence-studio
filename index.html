@@ -232,33 +232,46 @@
 
   .lb-close:hover { opacity: 1; }
 
-  /* slide area */
+  /* slide area — vertical scroll (Behance-style) */
   .lb-stage {
     flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    padding: 2rem;
-  }
-
-  .lb-slide {
-    width: 100%;
-    height: 100%;
-    display: none;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: clamp(12px, 2vw, 28px);
+    padding: clamp(16px, 3vw, 48px);
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .lb-slide.active { display: flex; }
+  .lb-block {
+    width: 100%;
+    max-width: 1100px;
+  }
 
-  .lb-slide .slide-media {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+  .lb-block img {
+    width: 100%;
+    height: auto;
     display: block;
+  }
+
+  /* responsive video block at top of the scroll */
+  .lb-video {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+
+  .lb-video iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
   }
 
   /* placeholder inside lightbox */
@@ -279,62 +292,6 @@
     text-transform: uppercase;
     color: rgba(255,255,255,0.2);
   }
-
-  /* prev / next arrows */
-  .lb-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--white);
-    opacity: 0.3;
-    font-size: 1.5rem;
-    transition: opacity 0.2s;
-    padding: 1rem;
-    line-height: 1;
-    font-family: var(--helvetica);
-    user-select: none;
-  }
-
-  .lb-arrow:hover { opacity: 1; }
-  .lb-arrow.prev { left: 0.5rem; }
-  .lb-arrow.next { right: 0.5rem; }
-
-  /* slide counter */
-  .lb-counter {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.1em;
-    color: var(--white);
-    opacity: 0.28;
-    text-align: center;
-    padding: 1rem;
-    flex-shrink: 0;
-  }
-
-  /* dot indicators */
-  .lb-dots {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    padding: 0 1rem 1.25rem;
-    flex-shrink: 0;
-  }
-
-  .lb-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    cursor: pointer;
-    transition: background 0.2s;
-    border: none;
-    padding: 0;
-  }
-
-  .lb-dot.active { background: rgba(255,255,255,0.75); }
 
   /* ── ABOUT DRAWER ── */
   #about-drawer {
@@ -508,15 +465,16 @@
     Edit the data-slides attribute: title, meta, and (optionally) src/type per slide.
     -->
 
-    <!-- ===== BMW M3 E30 — 3D render project (added) ===== -->
     <!-- ===== BMW M3 E30 — 3D render project ===== -->
-    <div class="gallery-item" data-slides='[{"title":"BMW M3 E30","meta":"BLACK / 01","src":"images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 02","src":"images/m3/bmw_m3_e30_02_side_profile_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 03","src":"images/m3/bmw_m3_e30_03_front_clean_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 04","src":"images/m3/bmw_m3_e30_04_grille_macro_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 05","src":"images/m3/bmw_m3_e30_05_rear_three-quarter_hero_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 06","src":"images/m3/bmw_m3_e30_06_wheel_detail_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 07","src":"images/m3/bmw_m3_e30_07_front_dark_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 08","src":"images/m3/bmw_m3_e30_08_top_down_bw.jpg"}]'>
+    <div class="gallery-item" data-video="1205749929" data-slides='[{"title":"BMW M3 E30","meta":"BLACK / 01","src":"images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 02","src":"images/m3/bmw_m3_e30_02_side_profile_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 03","src":"images/m3/bmw_m3_e30_03_front_clean_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 04","src":"images/m3/bmw_m3_e30_04_grille_macro_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 05","src":"images/m3/bmw_m3_e30_05_rear_three-quarter_hero_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 06","src":"images/m3/bmw_m3_e30_06_wheel_detail_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 07","src":"images/m3/bmw_m3_e30_07_front_dark_bw.jpg"},{"title":"BMW M3 E30","meta":"BLACK / 08","src":"images/m3/bmw_m3_e30_08_top_down_bw.jpg"}]'>
       <img src="images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg" class="slide-media" loading="lazy" decoding="async" alt="BMW M3 E30" style="aspect-ratio:16/9;object-fit:cover">
       <div class="overlay">
         <p class="overlay-title">BMW M3 E30</p>
         <p class="overlay-meta">3D Render · 2026</p>
       </div>
     </div>
+
+  </div>
 </section>
 
 <!-- ── FOOTER ── -->
@@ -535,14 +493,7 @@
     <button class="lb-close" id="lb-close">Close ✕</button>
   </div>
 
-  <div class="lb-stage">
-    <button class="lb-arrow prev" id="lb-prev">&#8592;</button>
-    <div id="lb-slides"></div>
-    <button class="lb-arrow next" id="lb-next">&#8594;</button>
-  </div>
-
-  <div class="lb-dots" id="lb-dots"></div>
-  <div class="lb-counter" id="lb-counter"></div>
+  <div class="lb-stage" id="lb-stage"></div>
 </div>
 
 <!-- ── ABOUT DRAWER ── -->
@@ -569,33 +520,48 @@
 </div>
 
 <script>
-/* ── LIGHTBOX ── */
+/* ── LIGHTBOX (vertical scroll, Behance-style) ── */
 const lightbox = document.getElementById('lightbox');
 const lbTitle  = document.getElementById('lb-title');
 const lbMeta   = document.getElementById('lb-meta');
-const lbSlides = document.getElementById('lb-slides');
-const lbDots   = document.getElementById('lb-dots');
-const lbCounter= document.getElementById('lb-counter');
+const lbStage  = document.getElementById('lb-stage');
 const lbClose  = document.getElementById('lb-close');
-const lbPrev   = document.getElementById('lb-prev');
-const lbNext   = document.getElementById('lb-next');
 
-let slides = [], current = 0;
+function openLightbox(item) {
+  const data = JSON.parse(item.dataset.slides || '[]');
+  const videoId = item.dataset.video;
+  if (!data.length && !videoId) return;
 
-function buildSlides(data) {
-  lbSlides.innerHTML = '';
-  lbDots.innerHTML = '';
-  slides = data;
+  lbStage.innerHTML = '';
 
-  data.forEach((s, i) => {
-    const div = document.createElement('div');
-    div.className = 'lb-slide' + (i === 0 ? ' active' : '');
+  // header text from the tile's overlay
+  lbTitle.textContent = item.querySelector('.overlay-title')?.textContent || '';
+  lbMeta.textContent  = item.querySelector('.overlay-meta')?.textContent  || '';
 
+  // video first (if a real id is set)
+  if (videoId && videoId !== 'VIMEO_ID') {
+    const v = document.createElement('div');
+    v.className = 'lb-video';
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://player.vimeo.com/video/' + videoId + '?title=0&byline=0&portrait=0&badge=0&dnt=1';
+    iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.title = lbTitle.textContent || 'Project film';
+    v.appendChild(iframe);
+    lbStage.appendChild(v);
+  }
+
+  // then the stills, stacked vertically
+  data.forEach(s => {
+    const block = document.createElement('div');
+    block.className = 'lb-block';
     if (s.src) {
-      const el = s.type === 'video'
-        ? Object.assign(document.createElement('video'), { src: s.src, autoplay: true, muted: true, loop: true, playsInline: true, className: 'slide-media' })
-        : Object.assign(document.createElement('img'), { src: s.src, className: 'slide-media', loading: 'lazy', decoding: 'async' });
-      div.appendChild(el);
+      const img = document.createElement('img');
+      img.src = s.src;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.alt = s.title || '';
+      block.appendChild(img);
     } else {
       const ph = document.createElement('div');
       ph.className = 'lb-placeholder';
@@ -603,49 +569,19 @@ function buildSlides(data) {
       txt.className = 'lb-placeholder-text';
       txt.textContent = 'Add your media here';
       ph.appendChild(txt);
-      div.appendChild(ph);
+      block.appendChild(ph);
     }
-
-    lbSlides.appendChild(div);
-
-    const dot = document.createElement('button');
-    dot.className = 'lb-dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => goTo(i));
-    lbDots.appendChild(dot);
+    lbStage.appendChild(block);
   });
 
-  lbPrev.style.display = data.length > 1 ? '' : 'none';
-  lbNext.style.display = data.length > 1 ? '' : 'none';
-  lbDots.style.display = data.length > 1 ? '' : 'none';
-}
-
-function goTo(n) {
-  const allSlides = lbSlides.querySelectorAll('.lb-slide');
-  const allDots   = lbDots.querySelectorAll('.lb-dot');
-  allSlides[current].classList.remove('active');
-  allDots[current] && allDots[current].classList.remove('active');
-  current = (n + slides.length) % slides.length;
-  allSlides[current].classList.add('active');
-  allDots[current] && allDots[current].classList.add('active');
-  lbTitle.textContent = slides[current].title;
-  lbMeta.textContent  = slides[current].meta;
-  lbCounter.textContent = (current + 1) + ' / ' + slides.length;
-}
-
-function openLightbox(item) {
-  const data = JSON.parse(item.dataset.slides || '[]');
-  if (!data.length) return;
-  current = 0;
-  buildSlides(data);
-  lbTitle.textContent   = data[0].title;
-  lbMeta.textContent    = data[0].meta;
-  lbCounter.textContent = '1 / ' + data.length;
+  lbStage.scrollTop = 0;
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeLightbox() {
   lightbox.classList.remove('open');
+  lbStage.innerHTML = '';        // stops the Vimeo player on close
   document.body.style.overflow = '';
 }
 
@@ -654,23 +590,11 @@ document.querySelectorAll('.gallery-item:not(.empty)').forEach(item => {
 });
 
 lbClose.addEventListener('click', closeLightbox);
-lbPrev.addEventListener('click', () => goTo(current - 1));
-lbNext.addEventListener('click', () => goTo(current + 1));
-
-/* swipe support */
-let touchX = 0;
-lightbox.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-lightbox.addEventListener('touchend',   e => {
-  const dx = e.changedTouches[0].clientX - touchX;
-  if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
-});
 
 /* keyboard */
 document.addEventListener('keydown', e => {
   if (!lightbox.classList.contains('open')) return;
-  if (e.key === 'Escape')      closeLightbox();
-  if (e.key === 'ArrowRight')  goTo(current + 1);
-  if (e.key === 'ArrowLeft')   goTo(current - 1);
+  if (e.key === 'Escape') closeLightbox();
 });
 
 /* ── ABOUT DRAWER ── */
