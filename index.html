@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidence Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=Courier+Prime&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f8f7f4;
+    --mid: rgba(248,247,244,0.14);
+    --serif: 'EB Garamond', Georgia, serif;
+    --mono: 'Courier Prime', 'Courier New', monospace;
+    --helvetica: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV (floating, transparent over video) ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 1.75rem 2rem 1.25rem;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.75), transparent);
+    transition: background 0.4s;
+  }
+
+  .nav-logo {
+    font-family: var(--helvetica);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--helvetica);
+    font-size: 0.56rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.25s;
+    cursor: pointer;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active { opacity: 1; }
+
+  /* ── HERO — fullscreen video ── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .hero video,
+  .hero .hero-fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero .hero-fallback {
+    background: linear-gradient(135deg, #141414 0%, #0a0a0a 60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-fallback span {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(248,247,244,0.15);
+  }
+
+  /* dark gradient at bottom for legibility */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 45%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 3rem 4.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    max-width: 640px;
+    animation: fadeUp 1.1s 0.2s ease both;
+  }
+
+  .hero-scroll {
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    white-space: nowrap;
+    animation: fadeUp 1.1s 0.5s ease both;
+  }
+
+  .hero-scroll::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 42px;
+    background: var(--white);
+    opacity: 0.4;
+    margin: 0.8rem auto 0;
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.4; }
+    50%      { transform: scaleY(0.55); opacity: 0.15; }
+  }
+
+  /* ── PROJECT REEL ── */
+  .reel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project {
+    position: relative;
+    height: 88vh;
+    min-height: 540px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .project video,
+  .project img,
+  .project .project-fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project .project-fallback {
+    background: linear-gradient(160deg, #161616 0%, #0d0d0d 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .project-fallback span {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(248,247,244,0.12);
+  }
+
+  .project:hover video,
+  .project:hover img { transform: scale(1.045); }
+
+  .project::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,0.7) 0%, transparent 38%);
+    pointer-events: none;
+    transition: background 0.5s;
+  }
+
+  .project-info {
+    position: absolute;
+    left: 3rem;
+    bottom: 2.75rem;
+    z-index: 2;
+    transform: translateY(6px);
+    opacity: 0.92;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s;
+  }
+
+  .project:hover .project-info { transform: translateY(0); opacity: 1; }
+
+  .project-index {
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.2em;
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-title {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  .project-meta {
+    font-family: var(--helvetica);
+    font-size: 0.56rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-top: 0.6rem;
+  }
+
+  .project-view {
+    position: absolute;
+    right: 3rem;
+    bottom: 3rem;
+    z-index: 2;
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .project:hover .project-view { opacity: 0.85; transform: translateX(0); }
+
+  /* thin divider between projects */
+  .project + .project { border-top: 1px solid var(--mid); }
+
+  /* ── LIGHTBOX / PRESENTATION ── */
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  #lightbox.open { opacity: 1; pointer-events: all; }
+
+  .lb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 2rem;
+    flex-shrink: 0;
+  }
+
+  .lb-title {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--white);
+  }
+
+  .lb-meta {
+    font-family: var(--mono);
+    font-size: 0.54rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 0.38;
+    margin-top: 0.15rem;
+  }
+
+  .lb-close {
+    background: none; border: none; cursor: pointer;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    padding: 0;
+  }
+
+  .lb-close:hover { opacity: 1; }
+
+  .lb-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 1.5rem 4rem;
+  }
+
+  .lb-slide { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .lb-slide.active { display: flex; }
+
+  .lb-slide .slide-media {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .lb-placeholder {
+    width: min(640px, 92%);
+    aspect-ratio: 16/9;
+    background: #131313;
+    border: 1px solid rgba(255,255,255,0.07);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .lb-placeholder-text {
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.18);
+  }
+
+  .lb-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--white);
+    opacity: 0.3;
+    font-size: 1.4rem;
+    transition: opacity 0.2s;
+    padding: 1rem;
+    font-family: var(--helvetica);
+    user-select: none;
+    z-index: 2;
+  }
+
+  .lb-arrow:hover { opacity: 1; }
+  .lb-arrow.prev { left: 0.75rem; }
+  .lb-arrow.next { right: 0.75rem; }
+
+  .lb-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 1rem 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .lb-dots { display: flex; gap: 6px; }
+
+  .lb-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: background 0.2s;
+    border: none; padding: 0;
+  }
+
+  .lb-dot.active { background: rgba(255,255,255,0.8); }
+
+  .lb-counter {
+    font-family: var(--mono);
+    font-size: 0.54rem;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    opacity: 0.25;
+  }
+
+  /* ── ABOUT DRAWER ── */
+  #about-drawer { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
+
+  .drawer-backdrop {
+    position: absolute; inset: 0;
+    background: #000;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .drawer-panel {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: min(480px, 92vw);
+    background: var(--black);
+    border-left: 1px solid var(--mid);
+    padding: 3rem 2.5rem;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  #about-drawer.open { pointer-events: all; }
+  #about-drawer.open .drawer-backdrop { opacity: 0.55; }
+  #about-drawer.open .drawer-panel { transform: translateX(0); }
+
+  .drawer-close {
+    position: absolute;
+    top: 1.5rem; right: 1.75rem;
+    background: none; border: none; cursor: pointer;
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    padding: 0;
+  }
+
+  .drawer-close:hover { opacity: 1; }
+
+  .drawer-label {
+    font-family: var(--mono);
+    font-size: 0.56rem;
+    opacity: 0.35;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .drawer-heading {
+    font-family: var(--helvetica);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-top: 0.35rem;
+  }
+
+  .drawer-divider { height: 1px; background: var(--mid); }
+
+  .drawer-tagline {
+    font-size: 1.15rem;
+    line-height: 1.55;
+    opacity: 0.6;
+    font-style: italic;
+  }
+
+  .drawer-text { font-size: 0.95rem; line-height: 1.85; opacity: 0.65; }
+  .drawer-text p + p { margin-top: 1.25rem; }
+
+  .drawer-contact {
+    margin-top: auto;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--mid);
+  }
+
+  .drawer-contact-label {
+    font-family: var(--mono);
+    font-size: 0.54rem;
+    opacity: 0.35;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .drawer-contact a {
+    font-size: 0.95rem;
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid var(--white);
+    padding-bottom: 1px;
+    transition: opacity 0.2s;
+  }
+
+  .drawer-contact a:hover { opacity: 0.45; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--mid);
+  }
+
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 0.54rem;
+    opacity: 0.28;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* reveal on scroll */
+  .project { opacity: 0; transform: translateY(30px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1); }
+  .project.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .hero-content { padding: 0 1.5rem 3.5rem; flex-direction: column; align-items: flex-start; gap: 2.5rem; }
+    .project { height: 70vh; min-height: 420px; }
+    .project-info { left: 1.5rem; bottom: 2rem; }
+    .project-view { display: none; }
+    .lb-stage { padding: 1rem; }
+    footer { flex-direction: column; gap: 0.3rem; align-items: flex-start; padding: 1.25rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#top">Evidence Studio</a>
+  <ul class="nav-links">
+    <li><a href="#reel">Work</a></li>
+    <li><a id="about-trigger" href="#">About</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<header class="hero" id="top">
+  <!--
+    HERO VIDEO: podmień src na swój najlepszy loop (np. videos/m3/bmw_m3_e30_hero.mp4).
+    Jeśli plik nie istnieje, pokaże się ciemny fallback.
+  -->
+  <video src="videos/m3/bmw_m3_e30_hero.mp4" autoplay muted loop playsinline
+         onerror="this.style.display='none'; document.getElementById('hero-fb').style.display='flex';"></video>
+  <div class="hero-fallback" id="hero-fb" style="display:none;"><span>Hero video — videos/m3/bmw_m3_e30_hero.mp4</span></div>
+
+  <div class="hero-content">
+    <h1 class="hero-title">Motion is the evidence.</h1>
+    <p class="hero-scroll">Scroll</p>
+  </div>
+</header>
+
+<!-- ── PROJECT REEL ── -->
+<main class="reel" id="reel">
+
+  <!--
+    KAŻDY PROJEKT = jeden <section class="project">.
+    W tle gra wideo (autoplay, loop, muted).
+    Kliknięcie otwiera prezentację (lightbox) ze slajdami z data-slides.
+
+    Dodanie nowego projektu = skopiuj cały blok, podmień video src, tytuł i data-slides.
+  -->
+
+  <section class="project" data-slides='[
+    {"title":"BMW M3 E30 — In Black","meta":"Film · 2026","src":"videos/m3/bmw_m3_e30_film.mp4","type":"video"},
+    {"title":"BMW M3 E30 — In Black","meta":"Cover","src":"images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Side Profile","src":"images/m3/bmw_m3_e30_02_side_profile_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Front","src":"images/m3/bmw_m3_e30_03_front_clean_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Grille Macro","src":"images/m3/bmw_m3_e30_04_grille_macro_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Rear Hero","src":"images/m3/bmw_m3_e30_05_rear_three-quarter_hero_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Wheel Detail","src":"images/m3/bmw_m3_e30_06_wheel_detail_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Front Dark","src":"images/m3/bmw_m3_e30_07_front_dark_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Top Down","src":"images/m3/bmw_m3_e30_08_top_down_bw.jpg"}
+  ]'>
+    <video src="videos/m3/bmw_m3_e30_film.mp4" autoplay muted loop playsinline
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"></video>
+    <div class="project-fallback" style="display:none;"><span>videos/m3/bmw_m3_e30_film.mp4</span></div>
+    <div class="project-info">
+      <p class="project-index">001</p>
+      <h2 class="project-title">BMW M3 E30 — In Black</h2>
+      <p class="project-meta">CGI · Art Direction · Sound Design</p>
+    </div>
+    <span class="project-view">View project →</span>
+  </section>
+
+  <!-- ── SZABLON NOWEGO PROJEKTU (odkomentuj i podmień) ──
+  <section class="project" data-slides='[
+    {"title":"Nazwa projektu","meta":"Film · 2026","src":"videos/nazwa/film.mp4","type":"video"},
+    {"title":"Nazwa projektu","meta":"Still 01","src":"images/nazwa/01.jpg"}
+  ]'>
+    <video src="videos/nazwa/film.mp4" autoplay muted loop playsinline
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"></video>
+    <div class="project-fallback" style="display:none;"><span>videos/nazwa/film.mp4</span></div>
+    <div class="project-info">
+      <p class="project-index">002</p>
+      <h2 class="project-title">Nazwa projektu</h2>
+      <p class="project-meta">CGI · Motion</p>
+    </div>
+    <span class="project-view">View project →</span>
+  </section>
+  -->
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span class="footer-copy">© 2026 Evidence Studio</span>
+  <span class="footer-copy">evidencestudiocontact@gmail.com</span>
+</footer>
+
+<!-- ── LIGHTBOX ── -->
+<div id="lightbox">
+  <div class="lb-header">
+    <div>
+      <p class="lb-title" id="lb-title"></p>
+      <p class="lb-meta"  id="lb-meta"></p>
+    </div>
+    <button class="lb-close" id="lb-close">Close ✕</button>
+  </div>
+  <div class="lb-stage">
+    <button class="lb-arrow prev" id="lb-prev">&#8592;</button>
+    <div id="lb-slides" style="width:100%;height:100%;"></div>
+    <button class="lb-arrow next" id="lb-next">&#8594;</button>
+  </div>
+  <div class="lb-footer">
+    <div class="lb-dots" id="lb-dots"></div>
+    <p class="lb-counter" id="lb-counter"></p>
+  </div>
+</div>
+
+<!-- ── ABOUT DRAWER ── -->
+<div id="about-drawer">
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <div class="drawer-panel">
+    <button class="drawer-close" id="drawer-close">Close ✕</button>
+    <div>
+      <p class="drawer-label">The studio</p>
+      <p class="drawer-heading">Evidence Studio</p>
+    </div>
+    <div class="drawer-divider"></div>
+    <p class="drawer-tagline">Art direction, CGI &amp; sound — moving images with intent.</p>
+    <div class="drawer-text">
+      <p>Evidence Studio is an independent creative practice working across CGI, art direction and sound design. We build moving images that carry weight — deliberate, cinematic, engineered to be remembered.</p>
+      <p>We believe great work leaves a trace. Every frame, every cut, every sound is evidence of intention.</p>
+      <p>We collaborate with brands and founders who understand that motion is not decoration — it is argument.</p>
+    </div>
+    <div class="drawer-contact">
+      <p class="drawer-contact-label">Get in touch</p>
+      <a href="mailto:evidencestudiocontact@gmail.com">evidencestudiocontact@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── SCROLL REVEAL ── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.project').forEach(p => observer.observe(p));
+
+/* ── LIGHTBOX ── */
+const lightbox = document.getElementById('lightbox');
+const lbTitle  = document.getElementById('lb-title');
+const lbMeta   = document.getElementById('lb-meta');
+const lbSlides = document.getElementById('lb-slides');
+const lbDots   = document.getElementById('lb-dots');
+const lbCounter= document.getElementById('lb-counter');
+
+let slides = [], current = 0;
+
+function buildSlides(data) {
+  lbSlides.innerHTML = '';
+  lbDots.innerHTML = '';
+  slides = data;
+
+  data.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'lb-slide' + (i === 0 ? ' active' : '');
+
+    if (s.src) {
+      let el;
+      if (s.type === 'video') {
+        el = document.createElement('video');
+        el.src = s.src; el.autoplay = true; el.muted = true; el.loop = true; el.playsInline = true; el.controls = true;
+      } else {
+        el = document.createElement('img');
+        el.src = s.src;
+      }
+      el.className = 'slide-media';
+      el.onerror = () => {
+        div.innerHTML = '<div class="lb-placeholder"><span class="lb-placeholder-text">Missing: ' + s.src + '</span></div>';
+      };
+      div.appendChild(el);
+    } else {
+      div.innerHTML = '<div class="lb-placeholder"><span class="lb-placeholder-text">Add media</span></div>';
+    }
+
+    lbSlides.appendChild(div);
+
+    const dot = document.createElement('button');
+    dot.className = 'lb-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    lbDots.appendChild(dot);
+  });
+
+  const multi = data.length > 1;
+  document.getElementById('lb-prev').style.display = multi ? '' : 'none';
+  document.getElementById('lb-next').style.display = multi ? '' : 'none';
+  lbDots.style.display = multi ? '' : 'none';
+}
+
+function goTo(n) {
+  const all  = lbSlides.querySelectorAll('.lb-slide');
+  const dots = lbDots.querySelectorAll('.lb-dot');
+  all[current].classList.remove('active');
+  dots[current] && dots[current].classList.remove('active');
+  /* pause videos on inactive slides */
+  all[current].querySelectorAll('video').forEach(v => v.pause());
+  current = (n + slides.length) % slides.length;
+  all[current].classList.add('active');
+  dots[current] && dots[current].classList.add('active');
+  all[current].querySelectorAll('video').forEach(v => v.play().catch(()=>{}));
+  lbTitle.textContent   = slides[current].title;
+  lbMeta.textContent    = slides[current].meta;
+  lbCounter.textContent = (current + 1) + ' / ' + slides.length;
+}
+
+function openLightbox(item) {
+  const data = JSON.parse(item.dataset.slides || '[]');
+  if (!data.length) return;
+  current = 0;
+  buildSlides(data);
+  lbTitle.textContent   = data[0].title;
+  lbMeta.textContent    = data[0].meta;
+  lbCounter.textContent = '1 / ' + data.length;
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lbSlides.querySelectorAll('video').forEach(v => v.pause());
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.project').forEach(p => {
+  p.addEventListener('click', () => openLightbox(p));
+});
+
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); goTo(current - 1); });
+document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); goTo(current + 1); });
+
+let touchX = 0;
+lightbox.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+lightbox.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+});
+
+document.addEventListener('keydown', e => {
+  if (lightbox.classList.contains('open')) {
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft')  goTo(current - 1);
+  }
+});
+
+/* ── ABOUT DRAWER ── */
+const drawer   = document.getElementById('about-drawer');
+const trigger  = document.getElementById('about-trigger');
+
+function openDrawer(e)  { e && e.preventDefault(); drawer.classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeDrawer()  { drawer.classList.remove('open'); document.body.style.overflow = ''; }
+
+trigger.addEventListener('click', openDrawer);
+document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
+document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+</script>
+
+</body>
+</html>
