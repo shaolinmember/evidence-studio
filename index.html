@@ -559,7 +559,17 @@
 </nav>
 
 <!-- ── HERO ── -->
-<header class="hero" id="top">
+<header class="hero" id="top" data-slides='[
+    {"title":"BMW M3 E30 — In Black","meta":"Film · 2026","src":"videos/m3/bmw_m3_e30_hero.mp4","type":"video"},
+    {"title":"BMW M3 E30 — In Black","meta":"Cover","src":"images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Side Profile","src":"images/m3/bmw_m3_e30_02_side_profile_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Front","src":"images/m3/bmw_m3_e30_03_front_clean_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Grille Macro","src":"images/m3/bmw_m3_e30_04_grille_macro_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Rear Hero","src":"images/m3/bmw_m3_e30_05_rear_three-quarter_hero_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Wheel Detail","src":"images/m3/bmw_m3_e30_06_wheel_detail_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Front Dark","src":"images/m3/bmw_m3_e30_07_front_dark_bw.jpg"},
+    {"title":"BMW M3 E30 — In Black","meta":"Top Down","src":"images/m3/bmw_m3_e30_08_top_down_bw.jpg"}
+  ]' style="cursor:pointer;">
   <!--
     HERO VIDEO: podmień src na swój najlepszy loop (np. videos/m3/bmw_m3_e30_hero.mp4).
     Jeśli plik nie istnieje, pokaże się ciemny fallback.
@@ -570,7 +580,7 @@
 
   <div class="hero-content">
     <h1 class="hero-title">Motion is the evidence.</h1>
-    <p class="hero-scroll">Scroll</p>
+    <p class="hero-scroll">Click to view project</p>
   </div>
 </header>
 
@@ -586,7 +596,7 @@
   -->
 
   <section class="project" data-slides='[
-    {"title":"BMW M3 E30 — In Black","meta":"Film · 2026","src":"videos/m3/bmw_m3_e30_film.mp4","type":"video"},
+    {"title":"BMW M3 E30 — In Black","meta":"Film · 2026","src":"videos/m3/bmw_m3_e30_hero.mp4","type":"video"},
     {"title":"BMW M3 E30 — In Black","meta":"Cover","src":"images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg"},
     {"title":"BMW M3 E30 — In Black","meta":"Side Profile","src":"images/m3/bmw_m3_e30_02_side_profile_bw.jpg"},
     {"title":"BMW M3 E30 — In Black","meta":"Front","src":"images/m3/bmw_m3_e30_03_front_clean_bw.jpg"},
@@ -596,9 +606,9 @@
     {"title":"BMW M3 E30 — In Black","meta":"Front Dark","src":"images/m3/bmw_m3_e30_07_front_dark_bw.jpg"},
     {"title":"BMW M3 E30 — In Black","meta":"Top Down","src":"images/m3/bmw_m3_e30_08_top_down_bw.jpg"}
   ]'>
-    <video src="videos/m3/bmw_m3_e30_film.mp4" autoplay muted loop playsinline
+    <video src="videos/m3/bmw_m3_e30_hero.mp4" autoplay muted loop playsinline
            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"></video>
-    <div class="project-fallback" style="display:none;"><span>videos/m3/bmw_m3_e30_film.mp4</span></div>
+    <div class="project-fallback" style="display:none;"><span>videos/m3/bmw_m3_e30_hero.mp4</span></div>
     <div class="project-info">
       <p class="project-index">001</p>
       <h2 class="project-title">BMW M3 E30 — In Black</h2>
@@ -769,6 +779,13 @@ function closeLightbox() {
 
 document.querySelectorAll('.project').forEach(p => {
   p.addEventListener('click', () => openLightbox(p));
+});
+
+/* hero opens the full M3 presentation */
+const hero = document.querySelector('.hero');
+hero.addEventListener('click', e => {
+  if (e.target.closest('nav') || e.target.closest('a')) return;
+  openLightbox(hero);
 });
 
 document.getElementById('lb-close').addEventListener('click', closeLightbox);
