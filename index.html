@@ -559,7 +559,7 @@
   footer {
     padding: 1.5rem 2rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     border-top: 1px solid var(--mid);
   }
@@ -620,7 +620,7 @@
   /* ── SOUND TOGGLE ── */
   #sound-toggle {
     position: fixed;
-    bottom: 1.6rem;
+    top: 1.6rem;
     right: 2rem;
     z-index: 150;
     background: none;
@@ -676,11 +676,11 @@
     pointer-events: none;
   }
 
-  #corner-clock { bottom: 1.75rem; left: 2rem; }
+  #corner-clock { top: 1.9rem; left: 2rem; }
 
   @media (max-width: 600px) {
     .corner { display: none; }
-    #sound-toggle { bottom: 1rem; right: 1.25rem; }
+    #sound-toggle { top: 1rem; right: 1.25rem; }
   }
 
   /* ── TITLE LETTER-SPREAD ON HOVER ── */
@@ -826,7 +826,6 @@
 <!-- ── FOOTER ── -->
 <footer>
   <span class="footer-copy">© 2026 Evidence Studio</span>
-  <span class="footer-copy">evidencestudiocontact@gmail.com</span>
 </footer>
 
 <!-- ── LIGHTBOX ── -->
@@ -872,7 +871,6 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <script>
 
 /* ── INTRO ── */
@@ -928,13 +926,6 @@ function tick() {
 }
 tick();
 setInterval(tick, 30000);
-
-/* ── SMOOTH SCROLL (Lenis) ── */
-if (typeof Lenis !== 'undefined') {
-  const lenis = new Lenis({ duration: 0.8, smoothWheel: true });
-  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-  requestAnimationFrame(raf);
-}
 
 /* ── SCROLL REVEAL ── */
 const observer = new IntersectionObserver(entries => {
