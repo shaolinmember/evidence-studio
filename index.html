@@ -1169,6 +1169,18 @@ const heroVideo = document.getElementById('hero-video');
 const deepLink = window.location.hash.length > 1;
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
+/* The intro is an arrival, not a transition. It locks the document behind an
+   opaque overlay for 3.3s, which is right the first time someone lands here
+   and wrong on every internal click — tapping the logo on a project page used
+   to mean a black, unscrollable screen for over three seconds, which reads as
+   the site hanging. Play it once per session instead: a new tab or a new visit
+   still gets the full open, moving around the site does not. */
+let seenIntro = false;
+try {
+  seenIntro = sessionStorage.getItem('es-intro-played') === '1';
+  sessionStorage.setItem('es-intro-played', '1');
+} catch (err) { /* private mode — fall back to playing it */ }
+
 /* scroll-behavior: smooth turns scrollTo into an animation the browser may
    drop or override, so force an instant jump and reset both scrolling roots. */
 function pinTop() {
@@ -1179,7 +1191,7 @@ function pinTop() {
   document.body.scrollTop = 0;
 }
 
-if (!deepLink) document.documentElement.classList.add('intro-lock');
+if (!deepLink && !seenIntro) document.documentElement.classList.add('intro-lock');
 pinTop();
 document.addEventListener('DOMContentLoaded', pinTop);
 window.addEventListener('load', pinTop);
@@ -1195,9 +1207,16 @@ setTimeout(() => clearInterval(pinHold), 3600);
    restore the previous playback position on reload or bfcache restore. */
 function startHero() {
   if (!heroVideo) return;
-  try { heroVideo.currentTime = 0; } catch (err) { /* not seekable yet */ }
-  const p = heroVideo.play();
-  if (p) p.catch(() => {});
+  const go = () => {
+    try { heroVideo.currentTime = 0; } catch (err) { /* not seekable yet */ }
+    const p = heroVideo.play();
+    if (p) p.catch(() => {});
+  };
+  /* With the intro skipped this can run before the first frame exists, where
+     seeking throws and play() races the element's own autoplay — which leaves
+     the film sitting on its poster. Wait for data if there is none yet. */
+  if (heroVideo.readyState >= 2) go();
+  else heroVideo.addEventListener('loadeddata', go, { once: true });
 }
 
 function endIntro() {
@@ -1215,9 +1234,24 @@ intro.addEventListener('animationend', e => {
 /* safety: force-remove after 4s in case animationend never fires */
 setTimeout(endIntro, 4000);
 
-/* Replay the intro on back/forward cache restores too, so returning to the
-   page behaves like a fresh load rather than resuming mid-film. */
-window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
+/* Already played this session: clear the overlay before the first paint so it
+   never flashes. This script is parser-blocking and sits after #intro, so the
+   element is here and nothing has been painted yet.
+
+   Deliberately not endIntro() — that also calls startHero(), and a play() this
+   early in the parse gets rejected by the autoplay policy, which leaves the
+   film stuck on its poster. On a fresh load the video's own autoplay attribute
+   already starts it from frame zero, so leave it alone. */
+if (seenIntro) {
+  intro.classList.add('done');
+  document.documentElement.classList.remove('intro-lock');
+  clearInterval(pinHold);
+}
+
+/* Coming back from a project page: rewind the hero film so it opens on its
+   first frame, but do not reload — a full reload here is what made the back
+   navigation feel broken. */
+window.addEventListener('pageshow', e => { if (e.persisted) { endIntro(); startHero(); } });
 
 /* ── SCROLL REVEAL ── */
 const observer = new IntersectionObserver(entries => {
