@@ -125,6 +125,11 @@
   .nav-links a:hover,
   .nav-links a.active { opacity: 1; }
 
+  /* nav is fixed, so anchor jumps must leave room for it or the section
+     heading lands underneath the bar */
+  #reel, #services { scroll-margin-top: 7.25rem; }
+  #top { scroll-margin-top: 0; }
+
   /* ── HERO — fullscreen video ── */
   .hero {
     position: relative;
@@ -287,8 +292,12 @@
     word-break: break-all;
   }
 
-  .project:hover .project-media video,
-  .project:hover .project-media img { transform: scale(1.04); }
+  /* Hover zoom only where there is a real pointer. On touch, :hover sticks
+     after a tap and the tile stays scaled until you tap somewhere else. */
+  @media (hover: hover) and (pointer: fine) {
+    .project:hover .project-media video,
+    .project:hover .project-media img { transform: scale(1.04); }
+  }
 
   .project-info {
     display: flex;
@@ -337,7 +346,9 @@
     text-shadow: 0 1px 8px rgba(0,0,0,0.9);
   }
 
-  .project:hover .project-view { opacity: 0.9; transform: translateX(0); }
+  @media (hover: hover) and (pointer: fine) {
+    .project:hover .project-view { opacity: 0.9; transform: translateX(0); }
+  }
 
   /* ── LIGHTBOX / PRESENTATION ── */
   #lightbox {
@@ -758,14 +769,60 @@
   .services-cta:hover { opacity: 0.45; }
 
   /* ── RESPONSIVE ── */
+
+  /* Tablet / narrow laptop. The lightbox reserves 4rem of gutter on each side
+     for the arrows; below ~900px that is a large slice of the image. */
+  @media (max-width: 900px) {
+    .reel-head { padding-left: 2rem; padding-right: 2rem; }
+    /* 330px min columns collapse to a single huge card on a tablet; 280 keeps
+       two columns down to ~700px */
+    .reel { padding-left: 2rem; padding-right: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    .hero-content { padding-left: 2rem; padding-right: 2rem; }
+    .lb-stage { padding: 1.25rem 2.75rem; }
+    .lb-slide { inset: 1.25rem 2.75rem; }
+    .lb-header { padding: 1.1rem 1.5rem; }
+  }
+
   @media (max-width: 600px) {
-    .services { padding: 3.5rem 1.5rem 3rem; }
-    .service, .service + .service { padding: 2rem 0 2.25rem; border-left: none; }
+    nav { padding: 1.1rem 1.25rem 0.9rem; gap: 0.45rem; }
+    .nav-links { gap: 1.5rem; }
+    /* the li inherits the 18px body line-height and pads the bar with ~19px
+       of dead space around 9px text */
+    .nav-links li { line-height: 1; }
+    #reel, #services { scroll-margin-top: 5.5rem; }
+
     .hero-content { padding: 0 1.5rem 3.5rem; flex-direction: column; align-items: center; gap: 2.5rem; }
+    .hero-scroll::after { height: 30px; margin-top: 0.6rem; }
+
     .reel-head { padding: 3rem 1.5rem 0; }
     .reel { grid-template-columns: 1fr; padding: 1.75rem 1.5rem 3.5rem; gap: 2.25rem; }
     .project-view { display: none; }
-    .lb-stage { padding: 1rem; }
+
+    .services { padding: 3.5rem 1.5rem 3rem; }
+    .service, .service + .service { padding: 2rem 0 2.25rem; border-left: none; }
+
+    /* .lb-slide is absolutely positioned, so it does NOT inherit .lb-stage's
+       padding — both have to shrink together or the slide keeps the desktop
+       4rem gutters and the image loses a third of a phone screen. */
+    .lb-stage { padding: 0.75rem 0.5rem; }
+    .lb-slide { inset: 0.75rem 0.5rem; }
+    .lb-header { padding: 0.9rem 1.1rem; }
+    .lb-title { font-size: 0.92rem; }
+    /* arrows sit over the image edges — swipe is the primary gesture here,
+       and the desktop glyph box is only 33px wide, under the 44px tap target */
+    .lb-arrow { font-size: 1.05rem; padding: 0.9rem 0.5rem; opacity: 0.45;
+                min-width: 44px; min-height: 44px;
+                display: flex; align-items: center; justify-content: center;
+                text-shadow: 0 1px 10px rgba(0,0,0,0.95); }
+    .lb-arrow.prev { left: 0; }
+    .lb-arrow.next { right: 0; }
+    .lb-footer { padding: 0 0.75rem 1rem; gap: 0.5rem; }
+    .lb-dot { width: 6px; height: 6px; }
+    .lb-dots { gap: 8px; }
+
+    .drawer-panel { padding: 2.25rem 1.5rem; }
+
     footer { flex-direction: column; gap: 0.3rem; align-items: flex-start; padding: 1.25rem 1.5rem; }
   }
 </style>
