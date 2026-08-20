@@ -354,6 +354,12 @@
 
   #lightbox.open { opacity: 1; pointer-events: all; }
 
+  /* A closed lightbox must not swallow clicks. .lb-slide.active re-enables
+     pointer-events, and a descendant doing that overrides the parent's
+     pointer-events: none — leaving an invisible full-screen layer over the
+     grid once a project has been opened and closed. */
+  #lightbox:not(.open) .lb-slide { pointer-events: none; }
+
   .lb-header {
     display: flex;
     justify-content: space-between;
