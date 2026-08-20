@@ -204,6 +204,20 @@
           /* headings pass under the bar on a phone; the desktop fade is too
              weak to keep the logo readable over them */
           background: linear-gradient(to bottom, rgba(10,10,10,0.94) 0%, rgba(10,10,10,0.8) 55%, transparent 100%); }
+
+    /* The cover shot is 16:9 with the bottle in the left third. Cropped to a
+       full-height portrait screen it keeps only the middle ~26% of the frame,
+       which is empty cobalt — the product falls outside the crop entirely.
+       A shorter cover shows the whole height of the image, and the focal
+       point pulls the crop back onto the bottle. */
+    .cover { height: 72svh; min-height: 460px; }
+    .cover img { object-position: 7% 50%; }
+    .cover::after {
+      background: linear-gradient(to top, rgba(10,10,10,0.95) 0%,
+                                            rgba(10,10,10,0.5) 30%,
+                                            transparent 62%);
+    }
+    .cover-content { padding-bottom: 2.25rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
