@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evidence Studio</title>
-<!-- the ?v query forces browsers to drop the previously cached icon -->
+<meta name="description" content="Evidence Studio — independent studio for CGI, motion, art direction and photography.">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
@@ -13,349 +14,154 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --black: #0a0a0a;
-    --white: #f8f7f4;
-    --mid: rgba(248,247,244,0.14);
+    --bg: #ffffff;
+    --fg: #0a0a0a;
+    --mid: rgba(10,10,10,0.12);
     --serif: 'EB Garamond', Georgia, serif;
     --mono: 'Courier Prime', 'Courier New', monospace;
     --helvetica: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --label: 0.7rem;
+    --gutter: clamp(1.25rem, 3vw, 2.5rem);
+    --bar-h: 64px;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--black);
-    color: var(--white);
+    background: var(--bg);
+    color: var(--fg);
     font-family: var(--serif);
     font-size: 18px;
     line-height: 1.6;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* ── INTRO ── */
-  /* while the overlay is up the page cannot be scrolled, so a late scroll
-     restoration cannot drag the view down past the hero */
-  html.intro-lock,
-  html.intro-lock body { overflow: hidden; height: 100%; }
-  /* smooth scrolling would animate the reset instead of jumping */
-  html.intro-lock { scroll-behavior: auto; }
-
+  /* ── INTRO — logo sharpens out of a blur, then blurs away (once per session) ── */
   #intro {
-    position: fixed;
-    inset: 0;
-    z-index: 500;
-    background: var(--black);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: fixed; inset: 0; z-index: 500;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
     animation: introHide 0.9s ease 2.4s both;
   }
-
   #intro.done { display: none; }
-
   .intro-logo {
     font-family: var(--helvetica);
     font-size: clamp(1rem, 2.6vw, 1.6rem);
     font-weight: 700;
-    letter-spacing: 0.34em;
+    letter-spacing: 0.34em; text-indent: 0.34em;   /* indent re-centres the tracking */
     text-transform: uppercase;
-    color: var(--white);
-    text-indent: 0.34em; /* optically centre against the tracking */
+    color: var(--fg);
     animation: introLogo 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-
   @keyframes introLogo {
     0%   { opacity: 0; letter-spacing: 0.5em; filter: blur(6px); }
     28%  { opacity: 1; filter: blur(0); }
     78%  { opacity: 1; letter-spacing: 0.34em; }
     100% { opacity: 0; letter-spacing: 0.3em; filter: blur(3px); }
   }
+  @keyframes introHide { to { opacity: 0; visibility: hidden; } }
 
-  @keyframes introHide {
-    from { opacity: 1; }
-    to   { opacity: 0; visibility: hidden; }
+  /* the board stays put underneath while the intro plays */
+  html.intro-lock, html.intro-lock body { overflow: hidden; height: 100%; }
+
+  /* ── TOP BAR ── */
+  .bar {
+    position: sticky; top: 0; z-index: 100;
+    height: var(--bar-h);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--gutter);
+    background: rgba(255,255,255,0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
-  /* hero cue waits for the intro to clear */
-  .hero-scroll { animation-delay: 2.9s !important; }
-
-  /* ── NAV (floating, transparent over video) ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 1.75rem 2rem 1.25rem;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.75), transparent);
-    transition: background 0.4s;
-  }
-
-  .nav-logo {
+  .brand {
     font-family: var(--helvetica);
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--white);
-    text-decoration: none;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--fg); text-decoration: none;
   }
 
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-  }
+  .bar nav { display: flex; gap: clamp(1.25rem, 3vw, 2.5rem); }
 
-  .nav-links a {
+  .bar nav a {
     font-family: var(--helvetica);
-    font-size: 0.56rem;
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--white);
-    text-decoration: none;
-    opacity: 0.5;
-    transition: opacity 0.25s;
+    font-size: var(--label);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--fg); text-decoration: none;
+    opacity: 0.55; transition: opacity 0.2s;
+  }
+  .bar nav a:hover { opacity: 1; }
+
+  #work { scroll-margin-top: var(--bar-h); }
+
+  /* ── EVIDENCE BOARD ──
+     Tiles are placed by script — scattered, a fresh arrangement on each visit. */
+  .board { position: relative; min-height: 100vh; }
+
+  .project {
+    position: absolute;
     cursor: pointer;
+    outline: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
   }
-
-  .nav-links a:hover,
-  .nav-links a.active { opacity: 1; }
-
-  /* nav is fixed, so anchor jumps must leave room for it or the section
-     heading lands underneath the bar */
-  #reel, #services { scroll-margin-top: 7.25rem; }
-  #top { scroll-margin-top: 0; }
-
-  /* ── HERO — fullscreen video ── */
-  .hero {
-    position: relative;
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-  }
-
-  .hero video,
-  .hero .hero-fallback {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .hero .hero-fallback {
-    background: linear-gradient(135deg, #141414 0%, #0a0a0a 60%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .hero-fallback span {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(248,247,244,0.15);
-  }
-
-  /* dark gradient at bottom for legibility */
-  .hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 45%);
-    pointer-events: none;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    padding: 0 3rem 4.5rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 2rem;
-  }
-
-  .hero-title {
-    font-family: var(--serif);
-    font-size: clamp(2.4rem, 6vw, 5rem);
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    max-width: 640px;
-    animation: fadeUp 1.1s 0.2s ease both;
-  }
-
-  .hero-scroll {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.45;
-    white-space: nowrap;
-    animation: fadeUp 1.1s 0.5s ease both;
-  }
-
-  .hero-scroll::after {
-    content: '';
-    display: block;
-    width: 1px;
-    height: 42px;
-    background: var(--white);
-    opacity: 0.4;
-    margin: 0.8rem auto 0;
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes scrollPulse {
-    0%, 100% { transform: scaleY(1); opacity: 0.4; }
-    50%      { transform: scaleY(0.55); opacity: 0.15; }
-  }
-
-  /* ── PROJECT GRID ── */
-  .reel-head {
-    padding: clamp(3.5rem, 9vh, 6.5rem) 3rem 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .reel-label {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.35;
-  }
-
-  .reel-count {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.16em;
-    opacity: 0.28;
-  }
-
-  .reel {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-    gap: clamp(2rem, 4vw, 3.25rem) clamp(1.5rem, 3vw, 2.5rem);
-    padding: clamp(2rem, 5vh, 3.25rem) 3rem clamp(4rem, 10vh, 7rem);
-  }
-
-  .project { cursor: pointer; }
+  .board.ready .project { opacity: 1; }
+  .project:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
 
   .project-media {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 5;
     overflow: hidden;
-    background: #131313;
+    background: #efeeea;
   }
 
-  .project-media video,
   .project-media img,
-  .project .project-fallback {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+  .project-media video,
+  .project-fallback {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     object-fit: cover;
-    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .project .project-fallback {
-    background: linear-gradient(160deg, #161616 0%, #0d0d0d 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    text-align: center;
-  }
+  .project-media img { transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+  .project-media video { opacity: 0; transition: opacity 0.5s ease; }
+  .project-media video.on { opacity: 1; }
 
+  .project-fallback {
+    background: #efeeea;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem; text-align: center;
+  }
   .project-fallback span {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(248,247,244,0.16);
-    word-break: break-all;
+    font-family: var(--mono); font-size: var(--label);
+    color: rgba(10,10,10,0.35); word-break: break-all;
   }
 
-  /* Hover zoom only where there is a real pointer. On touch, :hover sticks
-     after a tap and the tile stays scaled until you tap somewhere else. */
-  @media (hover: hover) and (pointer: fine) {
-    .project:hover .project-media video,
-    .project:hover .project-media img { transform: scale(1.04); }
-  }
-
-  .project-info {
-    display: flex;
-    align-items: baseline;
-    gap: 0.9rem;
-    padding-top: 1.05rem;
-  }
-
-  .project-index {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.18em;
-    opacity: 0.35;
-    flex: none;
-  }
-
-  .project-title {
-    font-family: var(--serif);
-    font-size: 1.35rem;
-    font-weight: 400;
-    line-height: 1.2;
-  }
-
-  .project-meta {
+  /* one small line under the picture — shown on hover, always on touch screens */
+  .project-cap {
+    position: absolute; top: 100%; left: 0; right: 0;
+    padding-top: 0.55rem;
     font-family: var(--helvetica);
-    font-size: 0.56rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.42;
-    margin-top: 0.4rem;
-    padding-left: calc(0.9rem + 2.1ch);
-  }
-
-  .project-view {
-    position: absolute;
-    right: 1rem;
-    bottom: 1rem;
-    z-index: 2;
-    font-family: var(--mono);
-    font-size: 0.54rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     opacity: 0;
-    transform: translateX(-6px);
-    transition: opacity 0.4s, transform 0.4s;
-    text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+    transition: opacity 0.25s;
   }
+  .project:hover .project-cap, .project:focus-visible .project-cap { opacity: 1; }
+  @media (hover: none) { .project-cap { opacity: 0.75; } }
 
-  @media (hover: hover) and (pointer: fine) {
-    .project:hover .project-view { opacity: 0.9; transform: translateX(0); }
-  }
 
-  /* ── LIGHTBOX / PRESENTATION ── */
+
+    /* ── LIGHTBOX / PRESENTATION ── */
   #lightbox {
     position: fixed;
     inset: 0;
     z-index: 300;
-    background: var(--black);
+    background: var(--bg);
     display: flex;
     flex-direction: column;
     opacity: 0;
@@ -383,7 +189,7 @@
     font-family: var(--serif);
     font-size: 1.05rem;
     font-style: italic;
-    color: var(--white);
+    color: var(--fg);
   }
 
   .lb-meta {
@@ -391,7 +197,7 @@
     font-size: 0.54rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--white);
+    color: var(--fg);
     opacity: 0.38;
     margin-top: 0.15rem;
   }
@@ -402,7 +208,7 @@
     font-size: 0.58rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--white);
+    color: var(--fg);
     opacity: 0.4;
     transition: opacity 0.2s;
     padding: 0;
@@ -444,8 +250,8 @@
   .lb-placeholder {
     width: min(640px, 92%);
     aspect-ratio: 16/9;
-    background: #131313;
-    border: 1px solid rgba(255,255,255,0.07);
+    background: #f1f0ec;
+    border: 1px solid rgba(10,10,10,0.07);
     display: flex; align-items: center; justify-content: center;
   }
 
@@ -454,7 +260,7 @@
     font-size: 0.56rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.18);
+    color: rgba(10,10,10,0.18);
   }
 
   .lb-arrow {
@@ -462,7 +268,7 @@
     top: 50%;
     transform: translateY(-50%);
     background: none; border: none; cursor: pointer;
-    color: var(--white);
+    color: var(--fg);
     opacity: 0.3;
     font-size: 1.4rem;
     transition: opacity 0.2s;
@@ -491,7 +297,7 @@
     left: 0; bottom: 0;
     height: 1px;
     width: 100%;
-    background: rgba(255,255,255,0.08);
+    background: rgba(10,10,10,0.08);
     overflow: hidden;
   }
 
@@ -499,7 +305,7 @@
     display: block;
     height: 100%;
     width: 100%;
-    background: rgba(255,255,255,0.55);
+    background: rgba(10,10,10,0.55);
     transform: scaleX(0);
     transform-origin: left;
   }
@@ -514,7 +320,7 @@
     font-size: 0.54rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--white);
+    color: var(--fg);
     opacity: 0.3;
     transition: opacity 0.2s;
   }
@@ -525,575 +331,423 @@
 
   .lb-dot {
     width: 4px; height: 4px; border-radius: 50%;
-    background: rgba(255,255,255,0.2);
+    background: rgba(10,10,10,0.2);
     cursor: pointer;
     transition: background 0.2s;
     border: none; padding: 0;
   }
 
-  .lb-dot.active { background: rgba(255,255,255,0.8); }
+  .lb-dot.active { background: rgba(10,10,10,0.8); }
 
   .lb-counter {
     font-family: var(--mono);
     font-size: 0.54rem;
     letter-spacing: 0.12em;
-    color: var(--white);
+    color: var(--fg);
     opacity: 0.25;
   }
 
-  /* ── ABOUT DRAWER ── */
-  #about-drawer { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
+
+  .lb-meta, .lb-counter, .lb-play, .lb-close { font-size: 0.66rem !important; opacity: 0.55 !important; }
+
+  /* ── DRAWERS (About, Services) ── */
+  .drawer { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
 
   .drawer-backdrop {
     position: absolute; inset: 0;
-    background: #000;
-    opacity: 0;
+    background: #000; opacity: 0;
     transition: opacity 0.4s ease;
   }
 
   .drawer-panel {
-    position: absolute;
-    top: 0; right: 0; bottom: 0;
+    position: absolute; top: 0; right: 0; bottom: 0;
     width: min(480px, 92vw);
-    background: var(--black);
+    background: var(--bg);
     border-left: 1px solid var(--mid);
     padding: 3rem 2.5rem;
     overflow-y: auto;
     transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    display: flex; flex-direction: column; gap: 2rem;
   }
 
-  #about-drawer.open { pointer-events: all; }
-  #about-drawer.open .drawer-backdrop { opacity: 0.55; }
-  #about-drawer.open .drawer-panel { transform: translateX(0); }
+  .drawer.open { pointer-events: all; }
+  .drawer.open .drawer-backdrop { opacity: 0.25; }
+  .drawer.open .drawer-panel { transform: translateX(0); }
 
   .drawer-close {
-    position: absolute;
-    top: 1.5rem; right: 1.75rem;
+    position: absolute; top: 1.5rem; right: 1.75rem;
     background: none; border: none; cursor: pointer;
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--white);
-    opacity: 0.4;
-    transition: opacity 0.2s;
-    padding: 0;
+    font-family: var(--mono); font-size: 0.66rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--fg); opacity: 0.5; transition: opacity 0.2s;
   }
-
   .drawer-close:hover { opacity: 1; }
 
   .drawer-label {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    opacity: 0.35;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-family: var(--mono); font-size: var(--label);
+    letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55;
   }
 
   .drawer-heading {
-    font-family: var(--helvetica);
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-top: 0.35rem;
+    font-family: var(--helvetica); font-size: 0.9rem; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase; margin-top: 0.35rem;
   }
 
   .drawer-divider { height: 1px; background: var(--mid); }
 
-  .drawer-tagline {
-    font-size: 1.15rem;
-    line-height: 1.55;
-    opacity: 0.6;
-    font-style: italic;
-  }
-
-  .drawer-text { font-size: 0.95rem; line-height: 1.85; opacity: 0.65; }
+  .drawer-tagline { font-size: 1.15rem; line-height: 1.55; opacity: 0.7; font-style: italic; }
+  .drawer-text { font-size: 0.98rem; line-height: 1.8; opacity: 0.8; }
   .drawer-text p + p { margin-top: 1.25rem; }
 
-  .drawer-contact {
-    margin-top: auto;
-    padding-top: 1.75rem;
-    border-top: 1px solid var(--mid);
-  }
-
-  .drawer-contact-label {
-    font-family: var(--mono);
-    font-size: 0.54rem;
-    opacity: 0.35;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 0.4rem;
-  }
-
+  .drawer-contact { margin-top: auto; padding-top: 1.75rem; border-top: 1px solid var(--mid); }
+  .drawer-contact .drawer-label { margin-bottom: 0.4rem; }
   .drawer-contact a {
-    font-size: 0.95rem;
-    color: var(--white);
-    text-decoration: none;
-    border-bottom: 1px solid var(--white);
-    padding-bottom: 1px;
-    transition: opacity 0.2s;
+    font-size: 0.98rem; color: var(--fg); text-decoration: none;
+    border-bottom: 1px solid var(--fg); padding-bottom: 1px; transition: opacity 0.2s;
   }
-
   .drawer-contact a:hover { opacity: 0.45; }
 
-  /* ── FOOTER ── */
-  footer {
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--mid);
-  }
 
-  .footer-copy {
-    font-family: var(--mono);
-    font-size: 0.54rem;
-    opacity: 0.28;
-    letter-spacing: 0.1em;
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(22px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* reveal on scroll */
-  .project { opacity: 0; transform: translateY(30px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1); }
-  .project.visible { opacity: 1; transform: translateY(0); }
-
-  /* ── SERVICES ── */
-  .services {
-    border-top: 1px solid var(--mid);
-    padding: clamp(4rem, 11vh, 8rem) 3rem clamp(3.5rem, 9vh, 6.5rem);
-  }
-
-  .services-label {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.35;
-  }
-
-  .services-intro {
+  .services { list-style: none; }
+  .services li {
     font-family: var(--serif);
-    font-style: italic;
-    font-size: clamp(1.5rem, 3.4vw, 2.6rem);
-    line-height: 1.2;
-    max-width: 22ch;
-    margin-top: 1.1rem;
-  }
-
-  .services-grid {
-    margin-top: clamp(2.75rem, 7vh, 5rem);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 0;
-    border-top: 1px solid var(--mid);
-  }
-
-  .service {
-    padding: 2.25rem 2.25rem 2.5rem 0;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.15;
+    padding: 0.55rem 0;
     border-bottom: 1px solid var(--mid);
   }
 
-  .service + .service { padding-left: 2.25rem; border-left: 1px solid var(--mid); }
-
-  .service-index {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.2em;
-    opacity: 0.32;
-  }
-
-  .service-title {
-    font-family: var(--serif);
-    font-size: 1.5rem;
-    font-weight: 400;
-    line-height: 1.15;
-    margin-top: 0.75rem;
-  }
-
-  .service-desc {
-    font-size: 0.95rem;
-    line-height: 1.75;
-    opacity: 0.6;
-    margin-top: 0.9rem;
-    max-width: 34ch;
-  }
-
-  .service-list {
-    list-style: none;
-    margin-top: 1.5rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--mid);
-  }
-
-  .service-list li {
-    font-family: var(--helvetica);
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    opacity: 0.45;
-    padding: 0.45rem 0;
-  }
-
-  .services-foot {
-    margin-top: clamp(2.5rem, 6vh, 4rem);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    align-items: baseline;
-    gap: 1.25rem;
-  }
-
-  .services-cta {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--white);
-    text-decoration: none;
-    border-bottom: 1px solid var(--white);
-    padding-bottom: 2px;
-    white-space: nowrap;
-    transition: opacity 0.25s;
-  }
-
-  .services-cta:hover { opacity: 0.45; }
-
   /* ── RESPONSIVE ── */
-
-  /* Tablet / narrow laptop. The lightbox reserves 4rem of gutter on each side
-     for the arrows; below ~900px that is a large slice of the image. */
-  @media (max-width: 900px) {
-    .reel-head { padding-left: 2rem; padding-right: 2rem; }
-    /* 330px min columns collapse to a single huge card on a tablet; 280 keeps
-       two columns down to ~700px */
-    .reel { padding-left: 2rem; padding-right: 2rem;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-    .hero-content { padding-left: 2rem; padding-right: 2rem; }
+  @media (max-width: 1000px) {
     .lb-stage { padding: 1.25rem 2.75rem; }
     .lb-slide { inset: 1.25rem 2.75rem; }
     .lb-header { padding: 1.1rem 1.5rem; }
   }
 
-  @media (max-width: 600px) {
-    nav { padding: 1.1rem 1.25rem 0.9rem; gap: 0.45rem; }
-    .nav-links { gap: 1.5rem; }
-    /* the li inherits the 18px body line-height and pads the bar with ~19px
-       of dead space around 9px text */
-    .nav-links li { line-height: 1; }
-    #reel, #services { scroll-margin-top: 5.5rem; }
+  @media (max-width: 640px) {
+    :root { --bar-h: 56px; }
+    .brand { font-size: 0.7rem; letter-spacing: 0.2em; }
+    .bar nav { gap: 1rem; }
+    .bar nav a { font-size: 0.64rem; letter-spacing: 0.12em; }
 
-    .hero-content { padding: 0 1.5rem 3.5rem; flex-direction: column; align-items: center; gap: 2.5rem; }
-    .hero-scroll::after { height: 30px; margin-top: 0.6rem; }
-
-    .reel-head { padding: 3rem 1.5rem 0; }
-    .reel { grid-template-columns: 1fr; padding: 1.75rem 1.5rem 3.5rem; gap: 2.25rem; }
-    .project-view { display: none; }
-
-    .services { padding: 3.5rem 1.5rem 3rem; }
-    .service, .service + .service { padding: 2rem 0 2.25rem; border-left: none; }
-
-    /* .lb-slide is absolutely positioned, so it does NOT inherit .lb-stage's
-       padding — both have to shrink together or the slide keeps the desktop
-       4rem gutters and the image loses a third of a phone screen. */
     .lb-stage { padding: 0.75rem 0.5rem; }
     .lb-slide { inset: 0.75rem 0.5rem; }
     .lb-header { padding: 0.9rem 1.1rem; }
     .lb-title { font-size: 0.92rem; }
-    /* arrows sit over the image edges — swipe is the primary gesture here,
-       and the desktop glyph box is only 33px wide, under the 44px tap target */
-    .lb-arrow { font-size: 1.05rem; padding: 0.9rem 0.5rem; opacity: 0.45;
+    .lb-arrow { font-size: 1.05rem; padding: 0.9rem 0.5rem; opacity: 0.55;
                 min-width: 44px; min-height: 44px;
-                display: flex; align-items: center; justify-content: center;
-                text-shadow: 0 1px 10px rgba(0,0,0,0.95); }
+                display: flex; align-items: center; justify-content: center; }
     .lb-arrow.prev { left: 0; }
     .lb-arrow.next { right: 0; }
     .lb-footer { padding: 0 0.75rem 1rem; gap: 0.5rem; }
     .lb-dot { width: 6px; height: 6px; }
     .lb-dots { gap: 8px; }
-
     .drawer-panel { padding: 2.25rem 1.5rem; }
+  }
 
-    footer { flex-direction: column; gap: 0.3rem; align-items: flex-start; padding: 1.25rem 1.5rem; }
+  @media (prefers-reduced-motion: reduce) {
+    #intro { display: none; }
+    .project, .project-media img { transition: none; }
   }
 </style>
 </head>
-<body>
+<body id="top">
 
 <script>
-/* Media fallback: try data-fallback once, then show the placeholder.
-   Defined early so it exists before any media error fires. */
 function mediaFail(el) {
   var fb = el.dataset.fallback;
-  if (fb) {
-    el.dataset.fallback = '';
-    el.src = fb;
-    if (el.tagName === 'VIDEO') el.load();
-    return;
-  }
+  if (fb) { el.dataset.fallback = ''; el.src = fb; return; }
   el.style.display = 'none';
-  var ph = el.nextElementSibling;
-  if (ph && ph.classList.contains('project-fallback')) ph.style.display = 'flex';
-  var hf = document.getElementById('hero-fb');
-  if (el.parentElement && el.parentElement.classList.contains('hero') && hf) hf.style.display = 'flex';
+  var ph = el.parentElement && el.parentElement.querySelector('.project-fallback');
+  if (ph) ph.style.display = 'flex';
 }
 </script>
 
-<!-- ── INTRO ── -->
-<div id="intro">
-  <p class="intro-logo">Evidence Studio</p>
-</div>
+<!-- ── INTRO (once per session, ~3.3s) ── -->
+<div id="intro"><p class="intro-logo">Evidence Studio</p></div>
+<script>
+(function () {
+  var intro = document.getElementById('intro'), root = document.documentElement, seen = false;
+  try { seen = sessionStorage.getItem('es-intro') === '1'; sessionStorage.setItem('es-intro', '1'); } catch (e) {}
+  if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { intro.classList.add('done'); return; }
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+  root.classList.add('intro-lock');
+  function end() { intro.classList.add('done'); root.classList.remove('intro-lock'); }
+  intro.addEventListener('animationend', function (e) { if (e.animationName === 'introHide') end(); });
+  setTimeout(end, 3800);   // safety, in case animationend never fires
+})();
+</script>
 
-<!-- ── NAV ── -->
-<nav>
-  <a class="nav-logo" href="#top">Evidence Studio</a>
-  <ul class="nav-links">
-    <li><a href="#reel">Work</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a id="about-trigger" href="#">About</a></li>
-  </ul>
-</nav>
-
-<!-- ── HERO ── -->
-<header class="hero" id="top">
-  <!--
-    HERO VIDEO: swap src for your best loop (e.g. videos/m3/bmw_m3_e30_hero.mp4).
-    If the file is missing, a dark fallback is shown instead.
-  -->
-  <video id="hero-video" src="videos/m3/bmw_m3_e30_hero.mp4" poster="images/m3/hero_poster.jpg"
-         autoplay muted loop playsinline preload="auto" onerror="mediaFail(this)"></video>
-  <div class="hero-fallback" id="hero-fb" style="display:none;"><span>Hero video — videos/m3/bmw_m3_e30_hero.mp4</span></div>
-
-  <div class="hero-content">
-    <p class="hero-scroll">Scroll</p>
-  </div>
+<!-- ── TOP BAR ── -->
+<header class="bar">
+  <a class="brand" href="#top">Evidence Studio</a>
+  <nav>
+    <a href="#work">Work</a>
+    <a id="services-trigger" href="#">Services</a>
+    <a id="about-trigger" href="#">About</a>
+  </nav>
 </header>
 
-<!-- ── PROJECT GRID ── -->
-<div class="reel-head" id="reel">
-  <p class="reel-label">Selected work</p>
-  <p class="reel-count">05 projects</p>
-</div>
-<main class="reel">
-
-  <!--
-    ONE PROJECT = one <section class="project">.
-    Background plays a video (autoplay, loop, muted) or shows an <img>.
-    Clicking opens the lightbox presentation built from data-slides.
-
-    To add a project: copy a whole block, swap the media src, title and data-slides.
-  -->
-
-  <section class="project" data-slides='[
-    {"title":"Glass & Liquid","meta":"Refraction","src":"images/glass/02_glass.jpg"},
-    {"title":"Glass & Liquid","meta":"Dispersion","src":"images/glass/03_material.jpg"},
-    {"title":"Glass & Liquid","meta":"Material — Wide","src":"images/glass/04_material_wide.jpg"}
-  ]'>
+<!-- ── EVIDENCE BOARD ──
+  ONE PROJECT = one <article class="project">.
+  data-ratio: the tile's shape (16/9, 4/5, 4/3, 2/3 …). Position and size are
+  scattered by script — a new arrangement on every visit.
+  <img> is the still; an optional <video data-src="…"> plays over it while on screen.
+  Clicking opens the presentation built from data-slides.
+-->
+<main class="board" id="work">
+  <article class="project" role="button" tabindex="0" aria-label="BMW M3 E30 — In Black" data-ratio="16/9" data-slides='[
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Film · 2026",
+    "src": "videos/m3/bmw_m3_e30_film.mp4",
+    "fallback": "videos/m3/bmw_m3_e30_hero.mp4",
+    "type": "video"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Cover",
+    "src": "images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Side Profile",
+    "src": "images/m3/bmw_m3_e30_02_side_profile_bw.jpg"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Front",
+    "src": "images/m3/bmw_m3_e30_03_front_clean_bw.jpg"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Grille Macro",
+    "src": "images/m3/bmw_m3_e30_04_grille_macro_bw.jpg"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Rear Hero",
+    "src": "images/m3/bmw_m3_e30_05_rear_three-quarter_hero_bw.jpg"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Wheel Detail",
+    "src": "images/m3/bmw_m3_e30_06_wheel_detail_bw.jpg"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Front Dark",
+    "src": "images/m3/bmw_m3_e30_07_front_dark_bw.jpg"
+    },
+    {
+    "title": "BMW M3 E30 — In Black",
+    "meta": "Top Down",
+    "src": "images/m3/bmw_m3_e30_08_top_down_bw.jpg"
+    }
+    ]'>
     <div class="project-media">
-      <img src="images/glass/02_glass.jpg" alt="Glass and liquid — refraction study"
-           loading="lazy" onerror="mediaFail(this)">
-      <div class="project-fallback" style="display:none;"><span>images/glass/02_glass.jpg</span></div>
-      <span class="project-view">View →</span>
+      <img src="images/m3/hero_poster.jpg" alt="BMW M3 E30 — In Black" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/m3/bmw_m3_e30_hero.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/m3/hero_poster.jpg</span></div>
     </div>
-    <div class="project-info">
-      <p class="project-index">001</p>
-      <h2 class="project-title">Glass &amp; Liquid</h2>
-    </div>
-    <p class="project-meta">CGI · Look Development</p>
-  </section>
-
-  <section class="project" data-slides='[
-    {"title":"Cloth","meta":"Simulation · 1920×1080 · 24 fps","src":"images/glass/05_cloth.mp4","type":"video"},
-    {"title":"Cloth","meta":"Still","src":"images/glass/05_cloth.jpg"}
-  ]'>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Material Study" data-ratio="4/5" data-slides='[
+    {
+    "title": "Material Study",
+    "meta": "Motion · 1600×900",
+    "src": "videos/material/material_lost.mp4",
+    "type": "video"
+    },
+    {
+    "title": "Material Study",
+    "meta": "Swirl",
+    "src": "images/material/material_01.jpg"
+    },
+    {
+    "title": "Material Study",
+    "meta": "Bloop",
+    "src": "images/material/material_02.jpg"
+    },
+    {
+    "title": "Material Study",
+    "meta": "Weave",
+    "src": "images/material/material_03.jpg"
+    }
+    ]'>
     <div class="project-media">
-      <video src="images/glass/05_cloth.mp4" autoplay muted loop playsinline
-             onerror="mediaFail(this)"></video>
-      <div class="project-fallback" style="display:none;"><span>images/glass/05_cloth.mp4</span></div>
-      <span class="project-view">View →</span>
-    </div>
-    <div class="project-info">
-      <p class="project-index">002</p>
-      <h2 class="project-title">Cloth</h2>
-    </div>
-    <p class="project-meta">CGI · Simulation</p>
-  </section>
-
-  <section class="project" data-slides='[
-    {"title":"Material Study","meta":"Motion · 1600×900","src":"videos/material/material_lost.mp4","type":"video"},
-    {"title":"Material Study","meta":"Swirl","src":"images/material/material_01.jpg"},
-    {"title":"Material Study","meta":"Bloop","src":"images/material/material_02.jpg"},
-    {"title":"Material Study","meta":"Weave","src":"images/material/material_03.jpg"}
-  ]'>
-    <div class="project-media">
-      <img src="images/material/material_01.jpg" alt="Material study — fabric"
-           loading="lazy" onerror="mediaFail(this)">
+      <img src="images/material/material_01.jpg" alt="Material study — fabric" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/material/material_lost.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/material/material_01.jpg</span></div>
-      <span class="project-view">View →</span>
     </div>
-    <div class="project-info">
-      <p class="project-index">003</p>
-      <h2 class="project-title">Material Study</h2>
-    </div>
-    <p class="project-meta">CGI · Motion · Look Development</p>
-  </section>
-
-  <section class="project" data-slides='[
-    {"title":"Dusty Green Duty","meta":"Editorial · Photography: Bartek Maślak","src":"images/dgd/dgd_03.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_01.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_02.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_04.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_05.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_06.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_07.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_08.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_09.jpg"},
-    {"title":"Dusty Green Duty","meta":"Photography: Bartek Maślak","src":"images/dgd/dgd_10.jpg"}
-  ]'>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Furniture" data-ratio="4/3" data-slides='[
+    {
+    "title": "Furniture",
+    "meta": "Sofa — Hero",
+    "src": "images/product/cgi/c01.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Sofa — Front",
+    "src": "images/product/cgi/c10.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Sofa — Three-quarter",
+    "src": "images/product/cgi/c11.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Sofa — Back",
+    "src": "images/product/cgi/c12.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Sofa — Studio",
+    "src": "images/product/cgi/c17.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Chair — Three-quarter",
+    "src": "images/product/cgi/c04.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Chair — Side",
+    "src": "images/product/cgi/c05.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Chair — Joint Detail",
+    "src": "images/product/cgi/c06.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Chair — Grain",
+    "src": "images/product/cgi/c07.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Chair — Seat Edge",
+    "src": "images/product/cgi/c08.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Wood Samples",
+    "src": "images/product/cgi/c03.webp"
+    },
+    {
+    "title": "Furniture",
+    "meta": "Blender Scene",
+    "src": "images/product/cgi/c13.webp"
+    }
+    ]'>
     <div class="project-media">
-      <img src="images/dgd/thumbs/dgd_04.jpg" alt="Dusty Green Duty — editorial"
-           loading="lazy" onerror="mediaFail(this)">
+      <img src="images/product/cgi/c01.webp" alt="Furniture — sofa render" loading="lazy" onerror="mediaFail(this)">
+      <div class="project-fallback" style="display:none;"><span>images/product/cgi/c01.webp</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Glass &amp; Liquid" data-ratio="4/5" data-slides='[
+    {
+    "title": "Glass & Liquid",
+    "meta": "Refraction",
+    "src": "images/glass/02_glass.jpg"
+    },
+    {
+    "title": "Glass & Liquid",
+    "meta": "Dispersion",
+    "src": "images/glass/03_material.jpg"
+    },
+    {
+    "title": "Glass & Liquid",
+    "meta": "Material — Wide",
+    "src": "images/glass/04_material_wide.jpg"
+    }
+    ]'>
+    <div class="project-media">
+      <img src="images/glass/02_glass.jpg" alt="Glass and liquid — refraction study" loading="lazy" onerror="mediaFail(this)">
+      <div class="project-fallback" style="display:none;"><span>images/glass/02_glass.jpg</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Dusty Green Duty" data-ratio="2/3" data-slides='[
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Editorial · Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_03.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_01.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_02.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_04.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_05.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_06.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_07.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_08.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_09.jpg"
+    },
+    {
+    "title": "Dusty Green Duty",
+    "meta": "Photography: Bartek Maślak",
+    "src": "images/dgd/dgd_10.jpg"
+    }
+    ]'>
+    <div class="project-media">
+      <img src="images/dgd/thumbs/dgd_04.jpg" alt="Dusty Green Duty — editorial" loading="lazy" onerror="mediaFail(this)">
       <div class="project-fallback" style="display:none;"><span>images/dgd/thumbs/dgd_04.jpg</span></div>
-      <span class="project-view">View →</span>
     </div>
-    <div class="project-info">
-      <p class="project-index">004</p>
-      <h2 class="project-title">Dusty Green Duty</h2>
-    </div>
-    <p class="project-meta">Editorial · Photography · Art Direction</p>
-  </section>
-
-  <section class="project" data-slides='[
-    {"title":"BMW M3 E30 — In Black","meta":"Film · 2026","src":"videos/m3/bmw_m3_e30_film.mp4","fallback":"videos/m3/bmw_m3_e30_hero.mp4","type":"video"},
-    {"title":"BMW M3 E30 — In Black","meta":"Cover","src":"images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg"},
-    {"title":"BMW M3 E30 — In Black","meta":"Side Profile","src":"images/m3/bmw_m3_e30_02_side_profile_bw.jpg"},
-    {"title":"BMW M3 E30 — In Black","meta":"Front","src":"images/m3/bmw_m3_e30_03_front_clean_bw.jpg"},
-    {"title":"BMW M3 E30 — In Black","meta":"Grille Macro","src":"images/m3/bmw_m3_e30_04_grille_macro_bw.jpg"},
-    {"title":"BMW M3 E30 — In Black","meta":"Rear Hero","src":"images/m3/bmw_m3_e30_05_rear_three-quarter_hero_bw.jpg"},
-    {"title":"BMW M3 E30 — In Black","meta":"Wheel Detail","src":"images/m3/bmw_m3_e30_06_wheel_detail_bw.jpg"},
-    {"title":"BMW M3 E30 — In Black","meta":"Front Dark","src":"images/m3/bmw_m3_e30_07_front_dark_bw.jpg"},
-    {"title":"BMW M3 E30 — In Black","meta":"Top Down","src":"images/m3/bmw_m3_e30_08_top_down_bw.jpg"}
-  ]'>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Cloth" data-ratio="16/9" data-slides='[
+    {
+    "title": "Cloth",
+    "meta": "Simulation · 1280×720 · 24 fps",
+    "src": "images/glass/05_cloth.mp4",
+    "type": "video"
+    },
+    {
+    "title": "Cloth",
+    "meta": "Still",
+    "src": "images/glass/05_cloth.jpg"
+    }
+    ]'>
     <div class="project-media">
-      <img src="images/m3/bmw_m3_e30_03_front_clean_bw.jpg" alt="BMW M3 E30 — In Black"
-           loading="lazy" onerror="mediaFail(this)">
-      <div class="project-fallback" style="display:none;"><span>images/m3/bmw_m3_e30_01_cover_three-quarter_bw.jpg</span></div>
-      <span class="project-view">View →</span>
+      <img src="images/glass/05_cloth.jpg" alt="Cloth simulation" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="images/glass/05_cloth.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/glass/05_cloth.jpg</span></div>
     </div>
-    <div class="project-info">
-      <p class="project-index">005</p>
-      <h2 class="project-title">BMW M3 E30 — In Black</h2>
-    </div>
-    <p class="project-meta">CGI · Art Direction · Sound Design</p>
-  </section>
-
-  <!-- ── NEW PROJECT TEMPLATE (uncomment and swap in your own paths) ──
-  <section class="project" data-slides='[
-    {"title":"Project name","meta":"Film · 2026","src":"videos/name/film.mp4","type":"video"},
-    {"title":"Project name","meta":"Still 01","src":"images/name/01.jpg"}
-  ]'>
-    <video src="videos/name/film.mp4" autoplay muted loop playsinline
-           onerror="mediaFail(this)"></video>
-    <div class="project-fallback" style="display:none;"><span>videos/name/film.mp4</span></div>
-    <div class="project-info">
-      <p class="project-index">006</p>
-      <h2 class="project-title">Project name</h2>
-      <p class="project-meta">CGI · Motion</p>
-    </div>
-    <span class="project-view">View project →</span>
-  </section>
-  -->
-
+  </article>
 </main>
-
-<!-- ── SERVICES ── -->
-<section class="services" id="services">
-  <p class="services-label">Services</p>
-  <p class="services-intro">What the studio takes on.</p>
-
-  <div class="services-grid">
-
-    <article class="service">
-      <p class="service-index">01</p>
-      <h3 class="service-title">CGI &amp; Product Visualisation</h3>
-      <p class="service-desc">Look development, materials and lighting — built to the point where the frame reads as photographed, not rendered.</p>
-      <ul class="service-list">
-        <li>Look dev &amp; reference frames</li>
-        <li>Materials &amp; PBR shading</li>
-        <li>Glass, liquid, metal, refraction</li>
-        <li>Packshots &amp; hero stills</li>
-      </ul>
-    </article>
-
-    <article class="service">
-      <p class="service-index">02</p>
-      <h3 class="service-title">Motion &amp; Simulation</h3>
-      <p class="service-desc">Pre-rendered sequences delivered finished — simulated, lit, rendered and graded to a final file.</p>
-      <ul class="service-list">
-        <li>Intros &amp; cut-scenes</li>
-        <li>Liquid — droplet, splash, ripple</li>
-        <li>Cloth &amp; soft body</li>
-        <li>Render, grading, delivery</li>
-      </ul>
-    </article>
-
-    <article class="service">
-      <p class="service-index">03</p>
-      <h3 class="service-title">Art Direction &amp; Sound</h3>
-      <p class="service-desc">The look decided before the build — frame, palette and pace, carried through to the final mix.</p>
-      <ul class="service-list">
-        <li>Concept &amp; reference boards</li>
-        <li>Camera, composition, grade</li>
-        <li>Sound design &amp; mix</li>
-        <li>Process &amp; breakdown docs</li>
-      </ul>
-    </article>
-
-    <article class="service">
-      <p class="service-index">04</p>
-      <h3 class="service-title">Video</h3>
-      <p class="service-desc">Film from board to delivery — shot or rendered, cut, graded and mixed to a master.</p>
-      <ul class="service-list">
-        <li>Concept &amp; storyboard</li>
-        <li>Direction &amp; camera</li>
-        <li>Edit, grade, sound</li>
-        <li>Social cutdowns &amp; masters</li>
-      </ul>
-    </article>
-
-    <article class="service">
-      <p class="service-index">05</p>
-      <h3 class="service-title">Photography</h3>
-      <p class="service-desc">Editorial and product stills — set, styling and light directed to a single look.</p>
-      <ul class="service-list">
-        <li>Editorial &amp; campaign</li>
-        <li>Product &amp; packshot</li>
-        <li>Casting, styling, location</li>
-        <li>Retouch &amp; colour</li>
-      </ul>
-    </article>
-
-  </div>
-
-  <div class="services-foot">
-    <a class="services-cta" href="mailto:evidencestudiocontact@gmail.com">Start a project →</a>
-  </div>
-</section>
-
-<!-- ── FOOTER ── -->
-<footer>
-  <span class="footer-copy">© 2026 Evidence Studio</span>
-  <span class="footer-copy">evidencestudiocontact@gmail.com</span>
-</footer>
 
 <!-- ── LIGHTBOX ── -->
 <div id="lightbox">
@@ -1119,11 +773,33 @@ function mediaFail(el) {
   </div>
 </div>
 
-<!-- ── ABOUT DRAWER ── -->
-<div id="about-drawer">
-  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+<!-- ── SERVICES ── -->
+<div class="drawer" id="services-drawer">
+  <div class="drawer-backdrop"></div>
   <div class="drawer-panel">
-    <button class="drawer-close" id="drawer-close">Close ✕</button>
+    <button class="drawer-close">Close ✕</button>
+    <p class="drawer-label">Services</p>
+    <ul class="services">
+      <li>Art Direction</li>
+      <li>Creative Direction</li>
+      <li>Marketing Strategies</li>
+      <li>Film Making</li>
+      <li>Photography</li>
+      <li>CGI</li>
+      <li>AI</li>
+    </ul>
+    <div class="drawer-contact">
+      <a href="mailto:evidencestudiocontact@gmail.com">Start a project →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── ABOUT ── -->
+<div class="drawer" id="about-drawer">
+  <div class="drawer-backdrop"></div>
+  <div class="drawer-panel">
+    <button class="drawer-close">Close ✕</button>
     <div>
       <p class="drawer-label">The studio</p>
       <p class="drawer-heading">Evidence Studio</p>
@@ -1136,113 +812,126 @@ function mediaFail(el) {
       <p>We collaborate with brands and founders who understand that motion is not decoration — it is argument.</p>
     </div>
     <div class="drawer-contact">
-      <p class="drawer-contact-label">Get in touch</p>
+      <p class="drawer-label">Get in touch</p>
       <a href="mailto:evidencestudiocontact@gmail.com">evidencestudiocontact@gmail.com</a>
     </div>
   </div>
 </div>
 
 <script>
-/* ── INTRO ── */
-const intro     = document.getElementById('intro');
-const heroVideo = document.getElementById('hero-video');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Land at the top on every load. Browsers restore the previous scroll offset
-   on reload, which drops you straight into the grid and skips the intro and
-   the opening of the hero film. Restoration can fire late, so pin it at each
-   stage of the load and keep the document locked while the overlay is up. */
-const deepLink = window.location.hash.length > 1;
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+/* ── BOARD LAYOUT ──
+   Seeded random, so a resize keeps the same arrangement and only a new visit
+   reshuffles it. Tiles go into 3 lanes (2 on a phone, 4 on a wide screen),
+   each at a random size, offset and height, so the lanes never line up into
+   a grid but nothing ever covers anything else. */
+const board = document.querySelector('.board');
+const tiles = [...document.querySelectorAll('.project')];
+const SEED  = (Math.random() * 2 ** 31) | 0;
 
-/* The intro is an arrival, not a transition. It locks the document behind an
-   opaque overlay for 3.3s, which is right the first time someone lands here
-   and wrong on every internal click — tapping the logo on a project page used
-   to mean a black, unscrollable screen for over three seconds, which reads as
-   the site hanging. Play it once per session instead: a new tab or a new visit
-   still gets the full open, moving around the site does not. */
-let seenIntro = false;
-try {
-  seenIntro = sessionStorage.getItem('es-intro-played') === '1';
-  sessionStorage.setItem('es-intro-played', '1');
-} catch (err) { /* private mode — fall back to playing it */ }
-
-/* scroll-behavior: smooth turns scrollTo into an animation the browser may
-   drop or override, so force an instant jump and reset both scrolling roots. */
-function pinTop() {
-  if (deepLink) return;
-  try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }
-  catch (err) { window.scrollTo(0, 0); }
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
-}
-
-if (!deepLink && !seenIntro) document.documentElement.classList.add('intro-lock');
-pinTop();
-document.addEventListener('DOMContentLoaded', pinTop);
-window.addEventListener('load', pinTop);
-
-/* Restoration can land after load, after images decode, or after the layout
-   settles. Hold the top for the length of the intro instead of trusting a
-   single reset. */
-const pinHold = setInterval(pinTop, 50);
-setTimeout(() => clearInterval(pinHold), 3600);
-
-/* The intro covers the hero for ~3.3s. Rewind the film to zero as the overlay
-   lifts so the opening frame is always the first thing seen — browsers otherwise
-   restore the previous playback position on reload or bfcache restore. */
-function startHero() {
-  if (!heroVideo) return;
-  const go = () => {
-    try { heroVideo.currentTime = 0; } catch (err) { /* not seekable yet */ }
-    const p = heroVideo.play();
-    if (p) p.catch(() => {});
+function rng(seed) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
-  /* With the intro skipped this can run before the first frame exists, where
-     seeking throws and play() races the element's own autoplay — which leaves
-     the film sitting on its poster. Wait for data if there is none yet. */
-  if (heroVideo.readyState >= 2) go();
-  else heroVideo.addEventListener('loadeddata', go, { once: true });
 }
 
-function endIntro() {
-  if (intro.classList.contains('done')) return;
-  pinTop();
-  clearInterval(pinHold);
-  intro.classList.add('done');
-  document.documentElement.classList.remove('intro-lock');
-  startHero();
+const ratioOf = el => { const [a, b] = el.dataset.ratio.split('/').map(Number); return a / b; };
+
+
+function layout() {
+  const r = rng(SEED);
+  const W = board.clientWidth;
+  const mobile = W < 700;
+  const lanes = mobile ? 2 : (W >= 1700 ? 4 : 3);
+  const edge = W * (mobile ? 0.04 : 0.06);
+  const laneW = (W - 2 * edge) / lanes;
+  const inner = mobile ? 10 : 28;                 // breathing room between lanes
+  const bottoms = new Array(lanes).fill(0);
+  let maxBottom = 0;
+
+  // the first row starts each lane at a different height
+  const order = [...Array(lanes).keys()].sort(() => r() - 0.5);
+
+  tiles.forEach((t, i) => {
+    const ratio = ratioOf(t);
+    const lane = i < lanes ? order[i]
+               : bottoms.indexOf(Math.min(...bottoms));   // then always the shortest lane
+    const room = laneW - inner;
+    const w = room * (mobile ? 0.82 + r() * 0.18 : 0.62 + r() * 0.3) * (ratio < 1 ? 0.88 : 1);
+    const h = w / ratio;
+    const x = edge + lane * laneW + inner / 2 + r() * (room - w);
+    const gap = i < lanes ? (mobile ? 16 : 30) + r() * (mobile ? 70 : 190)
+                          : (mobile ? 46 : 70) + r() * (mobile ? 50 : 120);
+    const y = bottoms[lane] + gap;
+
+    t.style.left  = x + 'px';
+    t.style.top   = y + 'px';
+    t.style.width = w + 'px';
+    t.querySelector('.project-media').style.height = h + 'px';
+
+    bottoms[lane] = y + h;
+    maxBottom = Math.max(maxBottom, y + h);
+  });
+
+  board.style.height = (maxBottom + (mobile ? 80 : 140)) + 'px';
 }
 
-intro.addEventListener('animationend', e => {
-  if (e.animationName === 'introHide') endIntro();
+
+
+
+let resizeT, lastW = board.clientWidth;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeT);
+  resizeT = setTimeout(() => {
+    if (board.clientWidth === lastW) return;   // phone URL bar: height only
+    lastW = board.clientWidth;
+    layout();
+  }, 120);
 });
-/* safety: force-remove after 4s in case animationend never fires */
-setTimeout(endIntro, 4000);
 
-/* Already played this session: clear the overlay before the first paint so it
-   never flashes. This script is parser-blocking and sits after #intro, so the
-   element is here and nothing has been painted yet.
+tiles.forEach(t => {
+  const cap = document.createElement('p');
+  cap.className = 'project-cap';
+  cap.textContent = t.getAttribute('aria-label');
+  t.appendChild(cap);
+});
 
-   Deliberately not endIntro() — that also calls startHero(), and a play() this
-   early in the parse gets rejected by the autoplay policy, which leaves the
-   film stuck on its poster. On a fresh load the video's own autoplay attribute
-   already starts it from frame zero, so leave it alone. */
-if (seenIntro) {
-  intro.classList.add('done');
-  document.documentElement.classList.remove('intro-lock');
-  clearInterval(pinHold);
-}
+layout();
+requestAnimationFrame(() => board.classList.add('ready'));
 
-/* Coming back from a project page: rewind the hero film so it opens on its
-   first frame, but do not reload — a full reload here is what made the back
-   navigation feel broken. */
-window.addEventListener('pageshow', e => { if (e.persisted) { endIntro(); startHero(); } });
+/* ── TILE FILMS — load near the screen, play while visible ── */
+const tileVideos = [...document.querySelectorAll('.project-media video')];
+let lightboxOpen = false;
 
-/* ── SCROLL REVEAL ── */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.15 });
-document.querySelectorAll('.project').forEach(p => observer.observe(p));
+tileVideos.forEach(v => {
+  v.addEventListener('playing', () => v.classList.add('on'));
+  v.addEventListener('error', () => v.remove());
+});
+
+const filmWatch = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    const v = e.target;
+    v.dataset.inview = e.isIntersecting ? '1' : '';
+    if (e.isIntersecting) {
+      if (!v.getAttribute('src')) { v.src = v.dataset.src; v.preload = 'auto'; }
+      if (!lightboxOpen) v.play().catch(() => {});
+    } else v.pause();
+  });
+}, { rootMargin: '150px 0px', threshold: 0.25 });
+
+if (!reduceMotion) tileVideos.forEach(v => filmWatch.observe(v));
+
+function pauseTiles()  { lightboxOpen = true;  tileVideos.forEach(v => v.pause()); }
+function resumeTiles() { lightboxOpen = false; tileVideos.forEach(v => { if (v.dataset.inview && v.getAttribute('src')) v.play().catch(() => {}); }); }
+
+/* keyboard: Enter / Space on a focused tile opens it */
+tiles.forEach(t => t.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t.click(); }
+}));
 
 /* ── LIGHTBOX ── */
 const lightbox = document.getElementById('lightbox');
@@ -1391,6 +1080,7 @@ function openLightbox(item) {
   lbCounter.textContent = '1 / ' + data.length;
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
+  pauseTiles();
   setPlaying(true);
 }
 
@@ -1399,6 +1089,7 @@ function closeLightbox() {
   lbSlides.querySelectorAll('video').forEach(v => v.pause());
   lightbox.classList.remove('open');
   document.body.style.overflow = '';
+  resumeTiles();
 }
 
 /* A project either has its own page (data-href) or opens in the lightbox. */
@@ -1441,17 +1132,15 @@ document.addEventListener('keydown', e => {
   }
 });
 
-/* ── ABOUT DRAWER ── */
-const drawer   = document.getElementById('about-drawer');
-const trigger  = document.getElementById('about-trigger');
 
-function openDrawer(e)  { e && e.preventDefault(); drawer.classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeDrawer()  { drawer.classList.remove('open'); document.body.style.overflow = ''; }
+/* ── DRAWERS ── */
+function openDrawer(d)  { d.classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeDrawers() { document.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open')); document.body.style.overflow = ''; }
 
-trigger.addEventListener('click', openDrawer);
-document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
-document.getElementById('drawer-close').addEventListener('click', closeDrawer);
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+document.getElementById('about-trigger').addEventListener('click', e => { e.preventDefault(); closeDrawers(); openDrawer(document.getElementById('about-drawer')); });
+document.getElementById('services-trigger').addEventListener('click', e => { e.preventDefault(); closeDrawers(); openDrawer(document.getElementById('services-drawer')); });
+document.querySelectorAll('.drawer-backdrop, .drawer-close').forEach(el => el.addEventListener('click', closeDrawers));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
 </script>
 
 </body>
