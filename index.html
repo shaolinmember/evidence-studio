@@ -156,199 +156,126 @@
 
 
 
-    /* ── LIGHTBOX / PRESENTATION ── */
-  #lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 300;
+  /* ── CASE FILE (one project, opened from the board) ── */
+  #case {
+    position: fixed; inset: 0; z-index: 300;
     background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+  }
+  #case.open { opacity: 1; visibility: visible; transition: opacity 0.35s ease; }
+
+  .case-bar {
+    position: sticky; top: 0; z-index: 2;
+    height: var(--bar-h);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--gutter);
+    background: rgba(255,255,255,0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
-  #lightbox.open { opacity: 1; pointer-events: all; }
-
-  /* A closed lightbox must not swallow clicks. .lb-slide.active re-enables
-     pointer-events, and a descendant doing that overrides the parent's
-     pointer-events: none — leaving an invisible full-screen layer over the
-     grid once a project has been opened and closed. */
-  #lightbox:not(.open) .lb-slide { pointer-events: none; }
-
-  .lb-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 2rem;
-    flex-shrink: 0;
-  }
-
-  .lb-title {
-    font-family: var(--serif);
-    font-size: 1.05rem;
-    font-style: italic;
-    color: var(--fg);
-  }
-
-  .lb-meta {
-    font-family: var(--mono);
-    font-size: 0.54rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--fg);
-    opacity: 0.38;
-    margin-top: 0.15rem;
-  }
-
-  .lb-close {
-    background: none; border: none; cursor: pointer;
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--fg);
-    opacity: 0.4;
-    transition: opacity 0.2s;
-    padding: 0;
-  }
-
-  .lb-close:hover { opacity: 1; }
-
-  .lb-stage {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    padding: 1.5rem 4rem;
-  }
-
-  /* every slide is stacked in the same box so they can cross-fade */
-  .lb-slide {
-    position: absolute;
-    inset: 1.5rem 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.65s ease;
-  }
-
-  .lb-slide.active { opacity: 1; pointer-events: auto; }
-
-  .lb-slide .slide-media {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-  }
-
-  .lb-placeholder {
-    width: min(640px, 92%);
-    aspect-ratio: 16/9;
-    background: #f1f0ec;
-    border: 1px solid rgba(10,10,10,0.07);
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .lb-placeholder-text {
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(10,10,10,0.18);
-  }
-
-  .lb-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none; border: none; cursor: pointer;
-    color: var(--fg);
-    opacity: 0.3;
-    font-size: 1.4rem;
-    transition: opacity 0.2s;
-    padding: 1rem;
+  .case-back, .case-count {
+    background: none; border: none; padding: 0;
     font-family: var(--helvetica);
-    user-select: none;
-    z-index: 2;
-  }
-
-  .lb-arrow:hover { opacity: 1; }
-  .lb-arrow.prev { left: 0.75rem; }
-  .lb-arrow.next { right: 0.75rem; }
-
-  .lb-footer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0 1rem 1.4rem;
-    flex-shrink: 0;
-  }
-
-  /* thin progress line showing how long the current still is held */
-  .lb-progress {
-    position: absolute;
-    left: 0; bottom: 0;
-    height: 1px;
-    width: 100%;
-    background: rgba(10,10,10,0.08);
-    overflow: hidden;
-  }
-
-  .lb-progress i {
-    display: block;
-    height: 100%;
-    width: 100%;
-    background: rgba(10,10,10,0.55);
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-
-  .lb-progress i.run { transition: transform linear; }
-
-  .lb-controls { display: flex; align-items: center; gap: 0.9rem; }
-
-  .lb-play {
-    background: none; border: none; padding: 0; cursor: pointer;
-    font-family: var(--mono);
-    font-size: 0.54rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-size: var(--label);
+    letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--fg);
-    opacity: 0.3;
+  }
+  .case-back { cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
+  .case-back:hover { opacity: 1; }
+  .case-count { opacity: 0.45; font-family: var(--mono); letter-spacing: 0.1em; }
+
+  .case-head {
+    padding: clamp(2.5rem, 8vh, 5.5rem) var(--gutter) clamp(2.5rem, 6vh, 4rem);
+    max-width: 1400px; margin: 0 auto;
+  }
+
+  .case-type {
+    font-family: var(--mono); font-size: var(--label);
+    letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55;
+  }
+
+  .case-title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(2.2rem, 5.2vw, 4.4rem);
+    line-height: 1.04; letter-spacing: -0.015em;
+    margin-top: 0.6rem;
+  }
+
+  .case-facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-top: clamp(2.25rem, 5vh, 3.5rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--mid);
+  }
+
+  .case-facts dt, .case-meta dt {
+    font-family: var(--mono); font-size: var(--label);
+    letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.5;
+  }
+
+  .case-facts dd {
+    font-family: var(--serif);
+    font-size: 1.08rem; line-height: 1.55;
+    margin-top: 0.55rem;
+    max-width: 38ch;
+  }
+
+  .case-meta {
+    display: flex; flex-wrap: wrap; gap: 0.6rem 2.75rem;
+    margin-top: clamp(1.75rem, 4vh, 2.5rem);
+  }
+  .case-meta div { display: flex; gap: 0.7rem; align-items: baseline; }
+  .case-meta dd {
+    font-family: var(--helvetica); font-size: 0.78rem; letter-spacing: 0.02em;
+  }
+
+  .case-media {
+    max-width: 1400px; margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .case-media img, .case-media video {
+    display: block; width: 100%; height: auto;
+    background: #efeeea;
+  }
+
+  .case-hero { margin-bottom: clamp(1rem, 2vw, 1.5rem); }
+
+  .case-gallery {
+    columns: 2;
+    column-gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  .case-gallery figure {
+    break-inside: avoid;
+    margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .case-next {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    max-width: 1400px;
+    margin: clamp(3rem, 9vh, 6rem) auto 0;
+    padding: 1.5rem var(--gutter) 3rem;
+    border-top: 1px solid var(--mid);
+    background: none; border-left: none; border-right: none; border-bottom: none;
+    width: 100%;
+    color: var(--fg); text-align: left; cursor: pointer;
+  }
+  .case-next span:first-child {
+    font-family: var(--mono); font-size: var(--label);
+    letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.5;
+  }
+  .case-next strong {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(1.5rem, 3.2vw, 2.4rem); line-height: 1.1;
     transition: opacity 0.2s;
   }
-
-  .lb-play:hover { opacity: 0.85; }
-
-  .lb-dots { display: flex; gap: 6px; }
-
-  .lb-dot {
-    width: 4px; height: 4px; border-radius: 50%;
-    background: rgba(10,10,10,0.2);
-    cursor: pointer;
-    transition: background 0.2s;
-    border: none; padding: 0;
-  }
-
-  .lb-dot.active { background: rgba(10,10,10,0.8); }
-
-  .lb-counter {
-    font-family: var(--mono);
-    font-size: 0.54rem;
-    letter-spacing: 0.12em;
-    color: var(--fg);
-    opacity: 0.25;
-  }
-
-
-  .lb-meta, .lb-counter, .lb-play, .lb-close { font-size: 0.66rem !important; opacity: 0.55 !important; }
+  .case-next:hover strong { opacity: 0.5; }
 
   /* ── DRAWERS (About, Services) ── */
   .drawer { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
@@ -419,31 +346,17 @@
   }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 1000px) {
-    .lb-stage { padding: 1.25rem 2.75rem; }
-    .lb-slide { inset: 1.25rem 2.75rem; }
-    .lb-header { padding: 1.1rem 1.5rem; }
-  }
-
   @media (max-width: 640px) {
     :root { --bar-h: 56px; }
     .brand { font-size: 0.7rem; letter-spacing: 0.2em; }
     .bar nav { gap: 1rem; }
     .bar nav a { font-size: 0.64rem; letter-spacing: 0.12em; }
 
-    .lb-stage { padding: 0.75rem 0.5rem; }
-    .lb-slide { inset: 0.75rem 0.5rem; }
-    .lb-header { padding: 0.9rem 1.1rem; }
-    .lb-title { font-size: 0.92rem; }
-    .lb-arrow { font-size: 1.05rem; padding: 0.9rem 0.5rem; opacity: 0.55;
-                min-width: 44px; min-height: 44px;
-                display: flex; align-items: center; justify-content: center; }
-    .lb-arrow.prev { left: 0; }
-    .lb-arrow.next { right: 0; }
-    .lb-footer { padding: 0 0.75rem 1rem; gap: 0.5rem; }
-    .lb-dot { width: 6px; height: 6px; }
-    .lb-dots { gap: 8px; }
     .drawer-panel { padding: 2.25rem 1.5rem; }
+
+    .case-facts { grid-template-columns: 1fr; gap: 1.5rem; }
+    .case-gallery { columns: 1; }
+    .case-next { flex-direction: column; gap: 0.5rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -470,7 +383,7 @@ function mediaFail(el) {
 (function () {
   var intro = document.getElementById('intro'), root = document.documentElement, seen = false;
   try { seen = sessionStorage.getItem('es-intro') === '1'; sessionStorage.setItem('es-intro', '1'); } catch (e) {}
-  if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { intro.classList.add('done'); return; }
+  if (seen || location.hash.indexOf('#/') === 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { intro.classList.add('done'); return; }
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
   root.classList.add('intro-lock');
@@ -492,13 +405,23 @@ function mediaFail(el) {
 
 <!-- ── EVIDENCE BOARD ──
   ONE PROJECT = one <article class="project">.
+  data-slug:  the project's address — evidencestudio.co/#/<slug>
+  data-type:  Case Study / Client / Editorial …   data-year, data-tools, data-credits: optional
+  data-what / data-for / data-why: the three lines on the project page
   data-ratio: the tile's shape (16/9, 4/5, 4/3, 2/3 …). Position and size are
   scattered by script — a new arrangement on every visit.
   <img> is the still; an optional <video data-src="…"> plays over it while on screen.
   Clicking opens the presentation built from data-slides.
 -->
 <main class="board" id="work">
-  <article class="project" role="button" tabindex="0" aria-label="BMW M3 E30 — In Black" data-ratio="16/9" data-slides='[
+  <article class="project" role="button" tabindex="0" aria-label="BMW M3 E30 — In Black"
+    data-slug="bmw-m3-e30" data-ratio="16/9"
+    data-type="Case Study" data-year="2026"
+    data-what="A monochrome CGI film and still series of the E30 M3 — studio light, car paint, chrome and glass built to read as a photographed editorial, finished with original sound design."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="To set the studio’s look: how much a single car can carry an image once colour is taken away and only light, reflection and form remain."
+    data-tools="Blender · Cycles · DaVinci Resolve · TouchDesigner" data-credits=""
+    data-slides='[
     {
     "title": "BMW M3 E30 — In Black",
     "meta": "Film · 2026",
@@ -553,7 +476,14 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/m3/hero_poster.jpg</span></div>
     </div>
   </article>
-  <article class="project" role="button" tabindex="0" aria-label="Material Study" data-ratio="4/5" data-slides='[
+  <article class="project" role="button" tabindex="0" aria-label="Material Study"
+    data-slug="material-study" data-ratio="4/5"
+    data-type="Case Study" data-year="2026"
+    data-what="Simulated fabric — swirl, bloop and weave — lit and graded as a short loop and a set of stills."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="To test how cloth holds up in close-up: weight, folds and weave texture at a level that works for fashion and product campaigns."
+    data-tools="Blender · Cycles · DaVinci Resolve" data-credits=""
+    data-slides='[
     {
     "title": "Material Study",
     "meta": "Motion · 1600×900",
@@ -582,7 +512,14 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/material/material_01.jpg</span></div>
     </div>
   </article>
-  <article class="project" role="button" tabindex="0" aria-label="Furniture" data-ratio="4/3" data-slides='[
+  <article class="project" role="button" tabindex="0" aria-label="Furniture"
+    data-slug="furniture" data-ratio="4/3"
+    data-type="Case Study" data-year="2026"
+    data-what="Product visualisation of a sofa and a dining chair — studio packshots and material close-ups of bouclé, walnut and leather."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="To show a furniture brand a full set from one model: hero shot, angles and the details that sell the material."
+    data-tools="Blender · Cycles" data-credits=""
+    data-slides='[
     {
     "title": "Furniture",
     "meta": "Sofa — Hero",
@@ -649,7 +586,14 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/product/cgi/c01.webp</span></div>
     </div>
   </article>
-  <article class="project" role="button" tabindex="0" aria-label="Glass &amp; Liquid" data-ratio="4/5" data-slides='[
+  <article class="project" role="button" tabindex="0" aria-label="Glass &amp; Liquid"
+    data-slug="glass-liquid" data-ratio="4/5"
+    data-type="Case Study" data-year="2026"
+    data-what="Abstract glass forms studied for refraction, dispersion and caustics."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="Glass is the hardest material to fake. This series is the benchmark behind the studio’s bottle, perfume and drinkware packshots."
+    data-tools="Blender · Cycles" data-credits=""
+    data-slides='[
     {
     "title": "Glass & Liquid",
     "meta": "Refraction",
@@ -671,7 +615,14 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/glass/02_glass.jpg</span></div>
     </div>
   </article>
-  <article class="project" role="button" tabindex="0" aria-label="Dusty Green Duty" data-ratio="2/3" data-slides='[
+  <article class="project" role="button" tabindex="0" aria-label="Dusty Green Duty"
+    data-slug="dusty-green-duty" data-ratio="2/3"
+    data-type="Editorial" data-year="2026"
+    data-what="An editorial photo story — set, styling and light directed to one look."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="To show that the studio’s art direction carries from the render to a real set and a real camera."
+    data-tools="" data-credits="Photography: Bartek Maślak · Art direction: Evidence Studio"
+    data-slides='[
     {
     "title": "Dusty Green Duty",
     "meta": "Editorial · Photography: Bartek Maślak",
@@ -728,7 +679,14 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/dgd/thumbs/dgd_04.jpg</span></div>
     </div>
   </article>
-  <article class="project" role="button" tabindex="0" aria-label="Cloth" data-ratio="16/9" data-slides='[
+  <article class="project" role="button" tabindex="0" aria-label="Cloth"
+    data-slug="cloth" data-ratio="16/9"
+    data-type="Case Study" data-year="2026"
+    data-what="A cloth simulation loop — fabric falling and settling in real time."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="Motion is where simulation either convinces or breaks. A study of timing, collision and drape for product and fashion films."
+    data-tools="Blender · Cycles · DaVinci Resolve" data-credits=""
+    data-slides='[
     {
     "title": "Cloth",
     "meta": "Simulation · 1280×720 · 24 fps",
@@ -749,30 +707,30 @@ function mediaFail(el) {
   </article>
 </main>
 
-<!-- ── LIGHTBOX ── -->
-<div id="lightbox">
-  <div class="lb-header">
-    <div>
-      <p class="lb-title" id="lb-title"></p>
-      <p class="lb-meta"  id="lb-meta"></p>
-    </div>
-    <button class="lb-close" id="lb-close">Close ✕</button>
+<!-- ── CASE FILE ──
+  Filled from the clicked tile: its data-* text fields and its data-slides media.
+-->
+<div id="case" role="dialog" aria-modal="true" aria-labelledby="case-title">
+  <div class="case-bar">
+    <button class="case-back" id="case-back">← Work</button>
+    <span class="case-count" id="case-count"></span>
   </div>
-  <div class="lb-stage">
-    <button class="lb-arrow prev" id="lb-prev">&#8592;</button>
-    <div id="lb-slides" style="width:100%;height:100%;"></div>
-    <button class="lb-arrow next" id="lb-next">&#8594;</button>
-    <div class="lb-progress" id="lb-progress"><i></i></div>
+  <header class="case-head">
+    <p class="case-type" id="case-type"></p>
+    <h1 class="case-title" id="case-title"></h1>
+    <dl class="case-facts">
+      <div><dt>What</dt><dd id="case-what"></dd></div>
+      <div><dt>For</dt><dd id="case-for"></dd></div>
+      <div><dt>Why</dt><dd id="case-why"></dd></div>
+    </dl>
+    <dl class="case-meta" id="case-meta"></dl>
+  </header>
+  <div class="case-media">
+    <div class="case-hero" id="case-hero"></div>
+    <div class="case-gallery" id="case-gallery"></div>
   </div>
-  <div class="lb-footer">
-    <div class="lb-controls">
-      <button class="lb-play" id="lb-play">Pause</button>
-      <div class="lb-dots" id="lb-dots"></div>
-    </div>
-    <p class="lb-counter" id="lb-counter"></p>
-  </div>
+  <button class="case-next" id="case-next"><span>Next</span><strong id="case-next-title"></strong></button>
 </div>
-
 
 <!-- ── SERVICES ── -->
 <div class="drawer" id="services-drawer">
@@ -933,206 +891,125 @@ tiles.forEach(t => t.addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t.click(); }
 }));
 
-/* ── LIGHTBOX ── */
-const lightbox = document.getElementById('lightbox');
-const lbTitle  = document.getElementById('lb-title');
-const lbMeta   = document.getElementById('lb-meta');
-const lbSlides = document.getElementById('lb-slides');
-const lbDots   = document.getElementById('lb-dots');
-const lbCounter= document.getElementById('lb-counter');
+/* ── CASE FILE ──
+   Every tile opens its own page with an address of #/<slug>, so a project can
+   be sent as a link and the browser's back button returns to the board. */
+const caseEl  = document.getElementById('case');
+const $ = id => document.getElementById(id);
+const cases = tiles.map(t => ({
+  el: t,
+  slug: t.dataset.slug,
+  title: t.getAttribute('aria-label'),
+  type: t.dataset.type || 'Case Study',
+  what: t.dataset.what || '',
+  for: t.dataset.for || '',
+  why: t.dataset.why || '',
+  meta: [['Year', t.dataset.year], ['Tools', t.dataset.tools], ['Credits', t.dataset.credits]].filter(m => m[1]),
+  slides: JSON.parse(t.dataset.slides || '[]')
+}));
+let currentCase = -1;
 
-const lbPlay   = document.getElementById('lb-play');
-const lbBar    = document.querySelector('#lb-progress i');
-
-let slides = [], current = 0;
-
-/* ── SLIDESHOW ──
-   Stills advance on a timer; a slide holding a film waits for the film to
-   finish instead, so a project reads as one continuous piece rather than a
-   folder you have to click through. */
-const STILL_MS = 3600;
-let playing = true, slideTimer = null;
-
-function stopTimer() {
-  clearTimeout(slideTimer);
-  slideTimer = null;
-  lbBar.classList.remove('run');
-  lbBar.style.transitionDuration = '0s';
-  lbBar.style.transform = 'scaleX(0)';
-}
-
-function runBar(ms) {
-  lbBar.classList.remove('run');
-  lbBar.style.transitionDuration = '0s';
-  lbBar.style.transform = 'scaleX(0)';
-  /* force a reflow so the reset lands before the animation starts */
-  void lbBar.offsetWidth;
-  lbBar.classList.add('run');
-  lbBar.style.transitionDuration = ms + 'ms';
-  lbBar.style.transform = 'scaleX(1)';
-}
-
-/* Schedule whatever should end the slide we just landed on. */
-function scheduleNext() {
-  stopTimer();
-  if (!playing || slides.length < 2) return;
-
-  const video = lbSlides.querySelectorAll('.lb-slide')[current].querySelector('video');
-  if (video) {
-    /* the film itself is the timer — advance when it ends */
-    lbBar.style.transform = 'scaleX(0)';
-    return;
+function mediaEl(s, hero) {
+  let el;
+  if (s.type === 'video') {
+    el = document.createElement('video');
+    el.muted = true; el.loop = true; el.playsInline = true; el.controls = true;
+    el.preload = hero ? 'auto' : 'metadata';
+    if (hero) el.autoplay = true;
+    el.src = s.src;
+    if (s.fallback) el.addEventListener('error', function retry() { el.removeEventListener('error', retry); el.src = s.fallback; }, { once: true });
+  } else {
+    el = document.createElement('img');
+    el.src = s.src; el.alt = s.meta || '';
+    if (!hero) el.loading = 'lazy';
   }
-  runBar(STILL_MS);
-  slideTimer = setTimeout(() => goTo(current + 1, true), STILL_MS);
+  return el;
 }
 
-function setPlaying(on) {
-  playing = on;
-  lbPlay.textContent = on ? 'Pause' : 'Play';
-  if (on) scheduleNext(); else stopTimer();
-}
-
-function buildSlides(data) {
-  lbSlides.innerHTML = '';
-  lbDots.innerHTML = '';
-  slides = data;
-
-  data.forEach((s, i) => {
-    const div = document.createElement('div');
-    div.className = 'lb-slide' + (i === 0 ? ' active' : '');
-
-    if (s.src) {
-      let el;
-      if (s.type === 'video') {
-        el = document.createElement('video');
-        el.src = s.src; el.autoplay = true; el.muted = true; el.playsInline = true; el.controls = true;
-        /* only loop when the film is the whole project; otherwise let it end
-           so the slideshow can move on to the stills */
-        el.loop = data.length < 2;
-        el.addEventListener('ended', () => {
-          if (playing && data.length > 1) goTo(current + 1, true);
-        });
-      } else {
-        el = document.createElement('img');
-        el.src = s.src;
-      }
-      el.className = 'slide-media';
-      el.onerror = () => {
-        if (s.fallback && !el.dataset.tried) {
-          el.dataset.tried = '1';
-          el.src = s.fallback;
-          if (el.tagName === 'VIDEO') el.load();
-          return;
-        }
-        div.innerHTML = '<div class="lb-placeholder"><span class="lb-placeholder-text">Missing: ' + s.src + '</span></div>';
-      };
-      div.appendChild(el);
-    } else {
-      div.innerHTML = '<div class="lb-placeholder"><span class="lb-placeholder-text">Add media</span></div>';
-    }
-
-    lbSlides.appendChild(div);
-
-    const dot = document.createElement('button');
-    dot.className = 'lb-dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', e => { e.stopPropagation(); goTo(i); });
-    lbDots.appendChild(dot);
+function fillCase(i) {
+  const c = cases[i];
+  currentCase = i;
+  $('case-type').textContent  = c.type;
+  $('case-title').textContent = c.title;
+  $('case-what').textContent  = c.what;
+  $('case-for').textContent   = c.for;
+  $('case-why').textContent   = c.why;
+  $('case-count').textContent = String(i + 1).padStart(2, '0') + ' / ' + String(cases.length).padStart(2, '0');
+  $('case-meta').innerHTML = '';
+  c.meta.forEach(([k, v]) => {
+    const d = document.createElement('div');
+    d.innerHTML = '<dt></dt><dd></dd>';
+    d.firstChild.textContent = k; d.lastChild.textContent = v;
+    $('case-meta').appendChild(d);
   });
 
-  const multi = data.length > 1;
-  document.getElementById('lb-prev').style.display = multi ? '' : 'none';
-  document.getElementById('lb-next').style.display = multi ? '' : 'none';
-  lbDots.style.display  = multi ? '' : 'none';
-  lbPlay.style.display  = multi ? '' : 'none';
-  document.getElementById('lb-progress').style.display = multi ? '' : 'none';
-}
-
-/* auto === true when the slideshow advanced by itself; a manual move leaves
-   playback running but restarts the clock from the new slide */
-function goTo(n, auto) {
-  const all  = lbSlides.querySelectorAll('.lb-slide');
-  const dots = lbDots.querySelectorAll('.lb-dot');
-  all[current].classList.remove('active');
-  dots[current] && dots[current].classList.remove('active');
-  /* rewind videos we are leaving so they replay from the head next time */
-  all[current].querySelectorAll('video').forEach(v => {
-    v.pause();
-    try { v.currentTime = 0; } catch (err) {}
+  caseEl.querySelectorAll('video').forEach(v => v.pause());
+  $('case-hero').innerHTML = '';
+  $('case-gallery').innerHTML = '';
+  if (c.slides.length) {
+    const hero = mediaEl(c.slides[0], true);
+    const still = c.el.querySelector('img');
+    if (hero.tagName === 'VIDEO' && still) hero.poster = still.getAttribute('src');   // no black box while the film loads
+    $('case-hero').appendChild(hero);
+  }
+  c.slides.slice(1).forEach(s => {
+    const f = document.createElement('figure');
+    f.appendChild(mediaEl(s, false));
+    $('case-gallery').appendChild(f);
   });
-  current = (n + slides.length) % slides.length;
-  all[current].classList.add('active');
-  dots[current] && dots[current].classList.add('active');
-  all[current].querySelectorAll('video').forEach(v => v.play().catch(()=>{}));
-  lbTitle.textContent   = slides[current].title;
-  lbMeta.textContent    = slides[current].meta;
-  lbCounter.textContent = (current + 1) + ' / ' + slides.length;
-  scheduleNext();
+
+  $('case-next-title').textContent = cases[(i + 1) % cases.length].title + ' →';
+  caseEl.scrollTop = 0;
 }
 
-function openLightbox(item) {
-  const data = JSON.parse(item.dataset.slides || '[]');
-  if (!data.length) return;
-  current = 0;
-  buildSlides(data);
-  lbTitle.textContent   = data[0].title;
-  lbMeta.textContent    = data[0].meta;
-  lbCounter.textContent = '1 / ' + data.length;
-  lightbox.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  pauseTiles();
-  setPlaying(true);
+function showCase(i) {
+  fillCase(i);
+  if (!caseEl.classList.contains('open')) {
+    caseEl.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    pauseTiles();
+  }
+  $('case-back').focus({ preventScroll: true });
 }
 
-function closeLightbox() {
-  stopTimer();
-  lbSlides.querySelectorAll('video').forEach(v => v.pause());
-  lightbox.classList.remove('open');
+function hideCase() {
+  if (!caseEl.classList.contains('open')) return;
+  caseEl.querySelectorAll('video').forEach(v => v.pause());
+  caseEl.classList.remove('open');
   document.body.style.overflow = '';
   resumeTiles();
+  if (cases[currentCase]) cases[currentCase].el.focus({ preventScroll: true });
 }
 
-/* A project either has its own page (data-href) or opens in the lightbox. */
-document.querySelectorAll('.project').forEach(p => {
-  p.addEventListener('click', () => {
-    const href = p.dataset.href;
-    if (href) { window.location.href = href; return; }
-    openLightbox(p);
-  });
+const slugFromHash = () => location.hash.startsWith('#/') ? decodeURIComponent(location.hash.slice(2)) : '';
+const indexOfSlug  = s => cases.findIndex(c => c.slug === s);
+
+function openCase(i) {
+  if (slugFromHash() !== cases[i].slug) history.pushState({ case: cases[i].slug }, '', '#/' + cases[i].slug);
+  showCase(i);
+}
+
+function closeCase() {
+  if (history.state && history.state.case) history.back();      // undo our own push
+  else { history.replaceState(null, '', location.pathname + location.search); hideCase(); }
+}
+
+window.addEventListener('popstate', () => {
+  const i = indexOfSlug(slugFromHash());
+  if (i >= 0) showCase(i); else hideCase();
 });
 
-document.getElementById('lb-close').addEventListener('click', closeLightbox);
-document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); goTo(current - 1); });
-document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); goTo(current + 1); });
-lbPlay.addEventListener('click', e => { e.stopPropagation(); setPlaying(!playing); });
-
-/* hovering the stage holds the current slide so you can actually look at it */
-document.querySelector('.lb-stage').addEventListener('mouseenter', () => { if (playing) stopTimer(); });
-document.querySelector('.lb-stage').addEventListener('mouseleave', () => { if (playing) scheduleNext(); });
-
-/* a backgrounded tab should not burn through the whole project */
-document.addEventListener('visibilitychange', () => {
-  if (!lightbox.classList.contains('open')) return;
-  if (document.hidden) stopTimer(); else if (playing) scheduleNext();
+tiles.forEach((t, i) => t.addEventListener('click', () => openCase(i)));
+$('case-back').addEventListener('click', closeCase);
+$('case-next').addEventListener('click', () => {
+  const n = (currentCase + 1) % cases.length;
+  history.replaceState({ case: cases[n].slug }, '', '#/' + cases[n].slug);
+  showCase(n);
 });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && caseEl.classList.contains('open')) closeCase(); });
 
-let touchX = 0;
-lightbox.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-lightbox.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchX;
-  if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
-});
-
-document.addEventListener('keydown', e => {
-  if (lightbox.classList.contains('open')) {
-    if (e.key === 'Escape')     closeLightbox();
-    if (e.key === 'ArrowRight') goTo(current + 1);
-    if (e.key === 'ArrowLeft')  goTo(current - 1);
-    if (e.key === ' ')          { e.preventDefault(); setPlaying(!playing); }
-  }
-});
-
-
+/* arriving on a project link opens that project straight away */
+{ const i = indexOfSlug(slugFromHash()); if (i >= 0) showCase(i); }
 /* ── DRAWERS ── */
 function openDrawer(d)  { d.classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeDrawers() { document.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open')); document.body.style.overflow = ''; }
