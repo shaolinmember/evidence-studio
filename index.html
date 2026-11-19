@@ -724,9 +724,10 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 
 /* ── BOARD LAYOUT ──
    Seeded random, so a resize keeps the same arrangement and only a new visit
-   reshuffles it. Tiles go into 3 lanes (2 on a phone, 4 on a wide screen),
-   each at a random size, offset and height, so the lanes never line up into
-   a grid but nothing ever covers anything else. */
+   reshuffles it. Tiles go into 3 lanes (2 on a phone, 4 on a wide screen);
+   each tile gets a different size from small to large (large ones take two
+   lanes), a random offset and gap, so nothing lines up into a grid and
+   nothing ever covers anything else. */
 const board = document.querySelector('.board');
 const tiles = [...document.querySelectorAll('.project')];
 const SEED  = (Math.random() * 2 ** 31) | 0;
@@ -746,35 +747,51 @@ const ratioOf = el => { const [a, b] = el.dataset.ratio.split('/').map(Number); 
 function layout() {
   const r = rng(SEED);
   const W = board.clientWidth;
+  const vh = window.innerHeight;
   const mobile = W < 700;
   const lanes = mobile ? 2 : (W >= 1700 ? 4 : 3);
   const edge = W * (mobile ? 0.04 : 0.06);
   const laneW = (W - 2 * edge) / lanes;
-  const inner = mobile ? 10 : 28;                 // breathing room between lanes
-  const bottoms = new Array(lanes).fill(0);
+  const inner = mobile ? 12 : 32;                       // breathing room between lanes
+  const bottoms = Array.from({ length: lanes }, () => r() * (mobile ? 40 : 160));   // staggered first row
   let maxBottom = 0;
 
-  // the first row starts each lane at a different height
-  const order = [...Array(lanes).keys()].sort(() => r() - 0.5);
+  // Every tile gets its own size: a ladder of areas from small to large,
+  // shuffled, so no two tiles on the board are the same size. Sizing by area
+  // (not width) keeps a tall portrait and a wide landscape visually comparable.
+  const n = tiles.length;
+  const lo = mobile ? 0.45 : 0.3, hi = mobile ? 2.6 : 3.4;
+  const sizes = Array.from({ length: n }, (_, i) => lo * Math.pow(hi / lo, n > 1 ? i / (n - 1) : 0.5));
+  for (let i = n - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [sizes[i], sizes[j]] = [sizes[j], sizes[i]]; }
 
   tiles.forEach((t, i) => {
     const ratio = ratioOf(t);
-    const lane = i < lanes ? order[i]
-               : bottoms.indexOf(Math.min(...bottoms));   // then always the shortest lane
-    const room = laneW - inner;
-    const w = room * (mobile ? 0.82 + r() * 0.18 : 0.62 + r() * 0.3) * (ratio < 1 ? 0.88 : 1);
+    const unit = laneW * 0.78;                          // a "1.0" tile: a square ~78% of a lane
+    let w = Math.sqrt(unit * unit * sizes[i] * ratio);
+
+    // big tiles take two lanes, the rest stay in one
+    const span = (w > (laneW - inner) * 1.2 && lanes >= 2) ? 2 : 1;   // only the clearly big ones
+    const room = span * laneW - inner;
+    w = Math.min(w, room, vh * 0.8 * ratio);            // never wider than its lanes, never taller than ~80% of the screen
+    w = Math.max(w, laneW * (mobile ? 0.55 : 0.36));
     const h = w / ratio;
+
+    // drop it where the column(s) are currently shortest
+    let lane = 0, top = Infinity;
+    for (let j = 0; j + span <= lanes; j++) {
+      const b = Math.max(...bottoms.slice(j, j + span));
+      if (b < top - 1) { top = b; lane = j; }
+    }
+    const gap = (mobile ? 40 : 64) + r() * (mobile ? 50 : 130);
     const x = edge + lane * laneW + inner / 2 + r() * (room - w);
-    const gap = i < lanes ? (mobile ? 16 : 30) + r() * (mobile ? 70 : 190)
-                          : (mobile ? 46 : 70) + r() * (mobile ? 50 : 120);
-    const y = bottoms[lane] + gap;
+    const y = (top === 0 ? 0 : top) + gap;
 
     t.style.left  = x + 'px';
     t.style.top   = y + 'px';
     t.style.width = w + 'px';
     t.querySelector('.project-media').style.height = h + 'px';
 
-    bottoms[lane] = y + h;
+    for (let j = lane; j < lane + span; j++) bottoms[j] = y + h;
     maxBottom = Math.max(maxBottom, y + h);
   });
 
