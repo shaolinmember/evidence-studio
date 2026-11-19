@@ -186,6 +186,7 @@
   }
   .case-back { cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
   .case-back:hover { opacity: 1; }
+  .case-back:focus:not(:focus-visible) { outline: none; }
   .case-count { opacity: 0.45; font-family: var(--mono); letter-spacing: 0.1em; }
 
   .case-head {
@@ -406,10 +407,11 @@ function mediaFail(el) {
 <!-- ── EVIDENCE BOARD ──
   ONE PROJECT = one <article class="project">.
   data-slug:  the project's address — evidencestudio.co/#/<slug>
-  data-type:  Case Study / Client / Editorial …   data-year, data-tools, data-credits: optional
+  data-type:  Case Study / Client / Editorial / Study …   data-year, data-tools, data-credits: optional
   data-what / data-for / data-why: the three lines on the project page
   data-ratio: the tile's shape (16/9, 4/5, 4/3, 2/3 …). Position and size are
   scattered by script — a new arrangement on every visit.
+  To hide a project without deleting it, turn its whole article block into an HTML comment.
   <img> is the still; an optional <video data-src="…"> plays over it while on screen.
   Clicking opens the presentation built from data-slides.
 -->
@@ -476,6 +478,20 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/m3/hero_poster.jpg</span></div>
     </div>
   </article>
+  <article class="project" role="button" tabindex="0" aria-label="Ferrari F40 — Rosso"
+    data-slug="ferrari-f40" data-ratio="16/9"
+    data-type="Case Study" data-year="2026"
+    data-what="A study in light, colour and restraint — one car, one hue, one black void. Clean studio stills, pushed through lens distortion, then cut into a film built from hundreds of procedurally spawned windows."
+    data-for="Self-initiated — a personal, non-commercial study. Not affiliated with Ferrari S.p.A."
+    data-why="To see how far a single red light could carry a design as iconic as the F40 — and to build MacPopups, the After Effects tool made for this film."
+    data-tools="Blender · Cycles · DaVinci Resolve · After Effects + MacPopups · Premiere Pro" data-credits="Photographic edit: Bartek Maślak"
+    data-slides='[{"title": "Ferrari F40 — Rosso", "meta": "Film — 16:9, with sound", "src": "videos/ferrari-f40/film.mp4", "type": "video"}, {"title": "Ferrari F40 — Rosso", "meta": "Hero", "src": "images/ferrari-f40/hero.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Front", "src": "images/ferrari-f40/front.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Left side", "src": "images/ferrari-f40/left-side.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Photographic edit — Bartek Maślak", "src": "images/ferrari-f40/photo-edit-red.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Photographic edit — Bartek Maślak", "src": "images/ferrari-f40/photo-edit-amber.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Frame — wheel arch", "src": "images/ferrari-f40/detail-wheel-arch.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Frame — headlights", "src": "images/ferrari-f40/detail-headlights.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Workflow", "src": "images/ferrari-f40/workflow.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-01.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-03.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-05.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-07.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Behind the scenes — x-ray vs final", "src": "videos/ferrari-f40/bts.mp4", "type": "video"}, {"title": "Ferrari F40 — Rosso", "meta": "MacPopups", "src": "images/ferrari-f40/macpopups.jpg"}]'>
+    <div class="project-media">
+      <img src="images/ferrari-f40/hero.jpg" alt="Ferrari F40 — Rosso" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/ferrari-f40/film.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/ferrari-f40/hero.jpg</span></div>
+    </div>
+  </article>
   <article class="project" role="button" tabindex="0" aria-label="Material Study"
     data-slug="material-study" data-ratio="4/5"
     data-type="Case Study" data-year="2026"
@@ -510,6 +526,48 @@ function mediaFail(el) {
       <img src="images/material/material_01.jpg" alt="Material study — fabric" loading="lazy" onerror="mediaFail(this)">
       <video data-src="videos/material/material_lost.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/material/material_01.jpg</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Rolety"
+    data-slug="rolety" data-ratio="9/16"
+    data-type="Study" data-year="2026"
+    data-what="A slow camera drift from a shuttered building into a fog-filled garden of flowers."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="An atmosphere study — volumetric fog, depth and a reveal paced to breathe."
+    data-tools="Blender · Cycles" data-credits=""
+    data-slides='[{"title": "Rolety", "meta": "Animation", "src": "videos/studies/rolety.mp4", "type": "video"}]'>
+    <div class="project-media">
+      <img src="images/studies/rolety.jpg" alt="Rolety" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/studies/rolety.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/studies/rolety.jpg</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Bubble Perfume"
+    data-slug="bubble-perfume" data-ratio="9/16"
+    data-type="Case Study" data-year="2026"
+    data-what="An experimental perfume bottle — a soft glass bubble form under low, moody light, with a motion piece of drifting bubbles."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="To design a bottle from scratch and test how far form and light alone can carry the mood of a fragrance."
+    data-tools="Blender · Lightroom · Illustrator · Photoshop" data-credits=""
+    data-slides='[{"title": "Bubble Perfume", "meta": "Motion", "src": "videos/bubbles/bubbles.mp4", "type": "video"}, {"title": "Bubble Perfume", "meta": "Bottle", "src": "images/bubbles/bubble-perfume.jpg"}, {"title": "Bubble Perfume", "meta": "Frame", "src": "images/bubbles/frame-0040.jpg"}, {"title": "Bubble Perfume", "meta": "Frame", "src": "images/bubbles/frame-0100.jpg"}]'>
+    <div class="project-media">
+      <img src="images/bubbles/poster.jpg" alt="Bubble Perfume" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/bubbles/bubbles.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/bubbles/poster.jpg</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Dreams Are Running Away"
+    data-slug="dreams-are-running-away" data-ratio="1600/844"
+    data-type="Study" data-year="2026"
+    data-what="A figure running through a bright, empty space — motion blur, hard shadows and a monochrome grade."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="Character motion and camera speed carrying the whole piece, with nothing else in frame."
+    data-tools="Blender · Cycles" data-credits=""
+    data-slides='[{"title": "Dreams Are Running Away", "meta": "Animation", "src": "videos/studies/dreams-are-running-away.mp4", "type": "video"}]'>
+    <div class="project-media">
+      <img src="images/studies/dreams-are-running-away.jpg" alt="Dreams Are Running Away" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/studies/dreams-are-running-away.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/studies/dreams-are-running-away.jpg</span></div>
     </div>
   </article>
   <article class="project" role="button" tabindex="0" aria-label="Furniture"
@@ -586,6 +644,20 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/product/cgi/c01.webp</span></div>
     </div>
   </article>
+  <article class="project" role="button" tabindex="0" aria-label="Humands"
+    data-slug="humands" data-ratio="16/9"
+    data-type="Study" data-year="2026"
+    data-what="A porcelain-like child figure waving at the camera, lit in cold blue."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="An uncanny close-up: skin, scale and one gesture held long enough to feel strange."
+    data-tools="Blender · Cycles" data-credits=""
+    data-slides='[{"title": "Humands", "meta": "Animation", "src": "videos/studies/humands.mp4", "type": "video"}]'>
+    <div class="project-media">
+      <img src="images/studies/humands.jpg" alt="Humands" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/studies/humands.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/studies/humands.jpg</span></div>
+    </div>
+  </article>
   <article class="project" role="button" tabindex="0" aria-label="Glass &amp; Liquid"
     data-slug="glass-liquid" data-ratio="4/5"
     data-type="Case Study" data-year="2026"
@@ -613,6 +685,20 @@ function mediaFail(el) {
     <div class="project-media">
       <img src="images/glass/02_glass.jpg" alt="Glass and liquid — refraction study" loading="lazy" onerror="mediaFail(this)">
       <div class="project-fallback" style="display:none;"><span>images/glass/02_glass.jpg</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Kitty"
+    data-slug="kitty" data-ratio="1/1"
+    data-type="Study" data-year="2026"
+    data-what="A photograph rebuilt as a live red halftone in TouchDesigner."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="Real-time image processing as a visual language — built and tuned live, not rendered."
+    data-tools="TouchDesigner" data-credits=""
+    data-slides='[{"title": "Kitty", "meta": "Animation", "src": "videos/studies/kitty.mp4", "type": "video"}]'>
+    <div class="project-media">
+      <img src="images/studies/kitty.jpg" alt="Kitty" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/studies/kitty.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/studies/kitty.jpg</span></div>
     </div>
   </article>
   <article class="project" role="button" tabindex="0" aria-label="Dusty Green Duty"
@@ -679,6 +765,20 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/dgd/thumbs/dgd_04.jpg</span></div>
     </div>
   </article>
+  <article class="project" role="button" tabindex="0" aria-label="911 — Glass"
+    data-slug="911-glass" data-ratio="16/9"
+    data-type="Study" data-year="2026"
+    data-what="A Porsche 911 silhouette seen through fluted glass, lit in red."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="Distortion as the subject — how little of a car is needed for it to still read."
+    data-tools="Blender · Cycles" data-credits=""
+    data-slides='[{"title": "911 — Glass", "meta": "Animation", "src": "videos/studies/911-glass.mp4", "type": "video"}]'>
+    <div class="project-media">
+      <img src="images/studies/911-glass.jpg" alt="911 — Glass" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/studies/911-glass.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/studies/911-glass.jpg</span></div>
+    </div>
+  </article>
   <article class="project" role="button" tabindex="0" aria-label="Cloth"
     data-slug="cloth" data-ratio="16/9"
     data-type="Case Study" data-year="2026"
@@ -703,6 +803,34 @@ function mediaFail(el) {
       <img src="images/glass/05_cloth.jpg" alt="Cloth simulation" loading="lazy" onerror="mediaFail(this)">
       <video data-src="images/glass/05_cloth.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/glass/05_cloth.jpg</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Kuce"
+    data-slug="kuce" data-ratio="1/1"
+    data-type="Study" data-year="2026"
+    data-what="A scene broken into a shimmering point cloud in TouchDesigner."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="Testing how much of an image survives when it is reduced to particles."
+    data-tools="TouchDesigner" data-credits=""
+    data-slides='[{"title": "Kuce", "meta": "Animation", "src": "videos/studies/kuce.mp4", "type": "video"}]'>
+    <div class="project-media">
+      <img src="images/studies/kuce.jpg" alt="Kuce" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/studies/kuce.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/studies/kuce.jpg</span></div>
+    </div>
+  </article>
+  <article class="project" role="button" tabindex="0" aria-label="Stands"
+    data-slug="stands" data-ratio="16/9"
+    data-type="Study" data-year="2026"
+    data-what="A scanned stadium stand with a seated figure, flown through as a Gaussian splat."
+    data-for="Self-initiated — Evidence Studio."
+    data-why="Testing scanning as a fast route from a real place to a camera move."
+    data-tools="Gaussian splatting" data-credits=""
+    data-slides='[{"title": "Stands", "meta": "Animation", "src": "videos/studies/stands.mp4", "type": "video"}]'>
+    <div class="project-media">
+      <img src="images/studies/stands.jpg" alt="Stands" loading="lazy" onerror="mediaFail(this)">
+      <video data-src="videos/studies/stands.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <div class="project-fallback" style="display:none;"><span>images/studies/stands.jpg</span></div>
     </div>
   </article>
 </main>
@@ -969,7 +1097,7 @@ function showCase(i) {
     document.body.style.overflow = 'hidden';
     pauseTiles();
   }
-  $('case-back').focus({ preventScroll: true });
+  $('case-back').focus({ preventScroll: true, focusVisible: false });
 }
 
 function hideCase() {
