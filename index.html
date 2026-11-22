@@ -365,10 +365,43 @@
     .project, .project-media img { transition: none; }
   }
 </style>
+<script>
+/* ?notrack on any page = stop counting this browser (your own visits); ?track = count again */
+try { if (/[?&]notrack\b/.test(location.search)) localStorage.setItem('umami.disabled', '1');
+      if (/[?&]track\b/.test(location.search))   localStorage.removeItem('umami.disabled'); } catch (e) {}
+</script>
+
 </head>
 <body id="top">
 
 <script>
+/* ── ANALYTICS (Umami, cookieless) ──
+   Pageviews: "/" = the board, "/work/<slug>" = each project, so the dashboard shows time per project.
+   Events: Drawer open, Contact click, Engaged (15s/1m/3m/10m of visible time), Leave (seconds on site). */
+const esQ = [];
+function esSend(fn) { if (window.umami) { try { fn(window.umami); } catch (e) {} } else if (esQ.length < 20) esQ.push(fn); }
+(function flush(n) { if (window.umami) { esQ.splice(0).forEach(esSend); return; } if (n < 40) setTimeout(() => flush(n + 1), 500); })(0);
+let esLastView = '';
+function esView(path, title) {
+  if (path === esLastView) return; esLastView = path;
+  esSend(u => u.track(p => ({ ...p, url: path + location.search, title: title + ' — Evidence Studio' })));
+}
+function esEvent(name, data) { esSend(u => u.track(name, data)); }
+(function engagement() {
+  let shown = 0, since = document.visibilityState === 'visible' ? performance.now() : null, left = false;
+  const secs = () => Math.round((shown + (since !== null ? performance.now() - since : 0)) / 1000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') { if (since !== null) { shown += performance.now() - since; since = null; } }
+    else since = performance.now();
+  });
+  const marks = [15, 60, 180, 600];
+  const timer = setInterval(() => {
+    while (marks.length && secs() >= marks[0]) esEvent('Engaged', { seconds: marks.shift() });
+    if (!marks.length) clearInterval(timer);
+  }, 5000);
+  window.addEventListener('pagehide', () => { if (!left) { left = true; esEvent('Leave', { seconds: secs() }); } });
+})();
+
 function mediaFail(el) {
   var fb = el.dataset.fallback;
   if (fb) { el.dataset.fallback = ''; el.src = fb; return; }
@@ -705,7 +738,7 @@ function mediaFail(el) {
       <li>AI</li>
     </ul>
     <div class="drawer-contact">
-      <a href="mailto:evidencestudiocontact@gmail.com">Start a project →</a>
+      <a href="mailto:evidencestudiocontact@gmail.com" data-umami-event="Contact click" data-umami-event-where="services">Start a project →</a>
     </div>
   </div>
 </div>
@@ -728,7 +761,7 @@ function mediaFail(el) {
     </div>
     <div class="drawer-contact">
       <p class="drawer-label">Get in touch</p>
-      <a href="mailto:evidencestudiocontact@gmail.com">evidencestudiocontact@gmail.com</a>
+      <a href="mailto:evidencestudiocontact@gmail.com" data-umami-event="Contact click" data-umami-event-where="about">evidencestudiocontact@gmail.com</a>
     </div>
   </div>
 </div>
@@ -938,6 +971,7 @@ function fillCase(i) {
 
 function showCase(i) {
   fillCase(i);
+  esView('/work/' + cases[i].slug, cases[i].title);
   if (!caseEl.classList.contains('open')) {
     caseEl.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -948,6 +982,7 @@ function showCase(i) {
 
 function hideCase() {
   if (!caseEl.classList.contains('open')) return;
+  esView('/', 'Work');
   caseEl.querySelectorAll('video').forEach(v => v.pause());
   caseEl.classList.remove('open');
   document.body.style.overflow = '';
@@ -959,12 +994,12 @@ const slugFromHash = () => location.hash.startsWith('#/') ? decodeURIComponent(l
 const indexOfSlug  = s => cases.findIndex(c => c.slug === s);
 
 function openCase(i) {
-  if (slugFromHash() !== cases[i].slug) history.pushState({ case: cases[i].slug }, '', '#/' + cases[i].slug);
+  if (slugFromHash() !== cases[i].slug) history.pushState({ case: cases[i].slug, pushed: true }, '', '#/' + cases[i].slug);
   showCase(i);
 }
 
 function closeCase() {
-  if (history.state && history.state.case) history.back();      // undo our own push
+  if (history.state && history.state.pushed) history.back();    // undo our own push (never leave the site)
   else { history.replaceState(null, '', location.pathname + location.search); hideCase(); }
 }
 
@@ -977,7 +1012,7 @@ tiles.forEach((t, i) => t.addEventListener('click', () => openCase(i)));
 $('case-back').addEventListener('click', closeCase);
 $('case-next').addEventListener('click', () => {
   const n = (currentCase + 1) % cases.length;
-  history.replaceState({ case: cases[n].slug }, '', '#/' + cases[n].slug);
+  history.replaceState({ case: cases[n].slug, pushed: !!(history.state && history.state.pushed) }, '', '#/' + cases[n].slug);
   showCase(n);
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && caseEl.classList.contains('open')) closeCase(); });
@@ -985,7 +1020,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && caseEl.cla
 /* arriving on a project link opens that project straight away */
 { const i = indexOfSlug(slugFromHash()); if (i >= 0) showCase(i); }
 /* ── DRAWERS ── */
-function openDrawer(d)  { d.classList.add('open'); document.body.style.overflow = 'hidden'; }
+function openDrawer(d)  { esEvent('Drawer open', { drawer: d.id.replace('-drawer', '') }); d.classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeDrawers() { document.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open')); document.body.style.overflow = ''; }
 
 document.getElementById('about-trigger').addEventListener('click', e => { e.preventDefault(); closeDrawers(); openDrawer(document.getElementById('about-drawer')); });
