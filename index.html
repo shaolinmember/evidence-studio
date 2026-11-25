@@ -351,7 +351,11 @@
     :root { --bar-h: 56px; }
     .brand { font-size: 0.7rem; letter-spacing: 0.2em; }
     .bar nav { gap: 1rem; }
-    .bar nav a { font-size: 0.64rem; letter-spacing: 0.12em; }
+    .bar nav a { font-size: 0.7rem; letter-spacing: 0.12em; }
+    /* bigger touch areas (44px) without changing how anything looks */
+    .bar nav a, .brand { padding: 13px 0; }
+    .case-back { padding: 14px 0; margin: -14px 0; }
+    .drawer-close { padding: 14px; margin: -14px; font-size: 0.7rem; }
 
     .drawer-panel { padding: 2.25rem 1.5rem; }
 
@@ -472,7 +476,7 @@ function mediaFail(el) {
     data-slides='[{"title": "Future of Flower Creation", "meta": "AI video — 4K", "src": "videos/ai/future-of-flower-creation.mp4", "type": "video"}]'>
     <div class="project-media">
       <img src="images/ai/future-of-flower-creation.jpg" alt="Future of Flower Creation" loading="lazy" onerror="mediaFail(this)">
-      <video data-src="videos/ai/future-of-flower-creation.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <video data-src="videos/ai/future-of-flower-creation.mp4" data-src-sm="videos/sm/future-of-flower-creation.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/ai/future-of-flower-creation.jpg</span></div>
     </div>
   </article>
@@ -508,7 +512,7 @@ function mediaFail(el) {
     ]'>
     <div class="project-media">
       <img src="images/material/material_poster.jpg" alt="Material study — fabric" loading="lazy" onerror="mediaFail(this)">
-      <video data-src="videos/material/material_lost.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <video data-src="videos/material/material_lost.mp4" data-src-sm="videos/sm/material_lost.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/material/material_01.jpg</span></div>
     </div>
   </article>
@@ -615,7 +619,7 @@ function mediaFail(el) {
     data-slides='[{"title": "Unicorns", "meta": "Animation", "src": "videos/studies/kuce.mp4", "type": "video"}]'>
     <div class="project-media">
       <img src="images/studies/kuce.jpg" alt="Unicorns" loading="lazy" onerror="mediaFail(this)">
-      <video data-src="videos/studies/kuce.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <video data-src="videos/studies/kuce.mp4" data-src-sm="videos/sm/kuce.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/studies/kuce.jpg</span></div>
     </div>
   </article>
@@ -677,7 +681,7 @@ function mediaFail(el) {
     ]'>
     <div class="project-media">
       <img src="images/m3/hero_poster.jpg" alt="BMW M3 E30 — In Black" loading="lazy" onerror="mediaFail(this)">
-      <video data-src="videos/m3/bmw_m3_e30_hero.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <video data-src="videos/m3/bmw_m3_e30_hero.mp4" data-src-sm="videos/sm/m3-bmw_m3_e30_hero.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/m3/hero_poster.jpg</span></div>
     </div>
   </article>
@@ -691,7 +695,7 @@ function mediaFail(el) {
     data-slides='[{"title": "Ferrari F40 — Rosso", "meta": "Film — 16:9, with sound", "src": "videos/ferrari-f40/film.mp4", "type": "video"}, {"title": "Ferrari F40 — Rosso", "meta": "Hero", "src": "images/ferrari-f40/hero.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Front", "src": "images/ferrari-f40/front.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Left side", "src": "images/ferrari-f40/left-side.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Photographic edit — Bartek Maślak", "src": "images/ferrari-f40/photo-edit-red.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Photographic edit — Bartek Maślak", "src": "images/ferrari-f40/photo-edit-amber.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Frame — wheel arch", "src": "images/ferrari-f40/detail-wheel-arch.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Frame — headlights", "src": "images/ferrari-f40/detail-headlights.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Workflow", "src": "images/ferrari-f40/workflow.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-01.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-03.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-05.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Lens study", "src": "images/ferrari-f40/exploration-07.jpg"}, {"title": "Ferrari F40 — Rosso", "meta": "Behind the scenes — x-ray vs final", "src": "videos/ferrari-f40/bts.mp4", "type": "video"}, {"title": "Ferrari F40 — Rosso", "meta": "MacPopups", "src": "images/ferrari-f40/macpopups.jpg"}]'>
     <div class="project-media">
       <img src="images/ferrari-f40/hero.jpg" alt="Ferrari F40 — Rosso" loading="lazy" onerror="mediaFail(this)">
-      <video data-src="videos/ferrari-f40/film.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      <video data-src="videos/ferrari-f40/film.mp4" data-src-sm="videos/sm/ferrari-f40-film.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/ferrari-f40/hero.jpg</span></div>
     </div>
   </article>
@@ -857,12 +861,14 @@ tileVideos.forEach(v => {
   v.addEventListener('error', () => v.remove());
 });
 
+// phones get light 720px tile films (videos/sm/); the project page always plays the full film
+const smallScreen = window.matchMedia('(max-width: 700px)').matches || !!(navigator.connection && navigator.connection.saveData);
 const filmWatch = new IntersectionObserver(entries => {
   entries.forEach(e => {
     const v = e.target;
     v.dataset.inview = e.isIntersecting ? '1' : '';
     if (e.isIntersecting) {
-      if (!v.getAttribute('src')) { v.src = v.dataset.src; v.preload = 'auto'; }
+      if (!v.getAttribute('src')) { v.src = (smallScreen && v.dataset.srcSm) || v.dataset.src; v.preload = 'auto'; }
       if (!lightboxOpen) v.play().catch(() => {});
     } else v.pause();
   });

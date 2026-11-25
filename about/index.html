@@ -107,6 +107,14 @@
   }
   .back:hover { opacity: 1; }
 
+  @media (max-width: 640px) {
+    :root { --bar-h: 56px; }
+    .brand { font-size: 0.7rem; letter-spacing: 0.2em; }
+    .bar nav { gap: 1rem; }
+    .bar nav a { font-size: 0.7rem; letter-spacing: 0.12em; }
+    .bar nav a, .brand { padding: 13px 0; }
+    .back { padding: 14px 0; }
+  }
   @media (max-width: 720px) {
     body { font-size: 17px; }
     .about { grid-template-columns: 1fr; }
@@ -139,12 +147,10 @@ try { if (/[?&]notrack\b/.test(location.search)) localStorage.setItem('umami.dis
 
   <div>
     <h1>Evidence Studio</h1>
-    <p class="tagline">Art direction, CGI &amp; sound — moving images with intent.</p>
+    <p class="tagline">CGI, film and art direction — images with intent.</p>
 
     <div class="text">
-      <p>Evidence Studio is an independent creative practice working across CGI, art direction and sound design. We build moving images that carry weight — deliberate, cinematic, engineered to be remembered.</p>
-      <p>We believe great work leaves a trace. Every frame, every cut, every sound is evidence of intention.</p>
-      <p>We collaborate with brands and founders who understand that motion is not decoration — it is argument.</p>
+      <p>An independent creative studio working with brands and founders. We make images that carry weight — deliberate, cinematic and built to be remembered. Every frame is evidence of intention.</p>
     </div>
 
     <div class="facts">
