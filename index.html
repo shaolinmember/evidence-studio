@@ -433,7 +433,7 @@ function mediaFail(el) {
   <nav>
     <a href="#work">Work</a>
     <a id="services-trigger" href="#">Services</a>
-    <a id="about-trigger" href="#">About</a>
+    <a href="about/">About</a>
   </nav>
 </header>
 
@@ -743,29 +743,6 @@ function mediaFail(el) {
   </div>
 </div>
 
-<!-- ── ABOUT ── -->
-<div class="drawer" id="about-drawer">
-  <div class="drawer-backdrop"></div>
-  <div class="drawer-panel">
-    <button class="drawer-close">Close ✕</button>
-    <div>
-      <p class="drawer-label">The studio</p>
-      <p class="drawer-heading">Evidence Studio</p>
-    </div>
-    <div class="drawer-divider"></div>
-    <p class="drawer-tagline">Art direction, CGI &amp; sound — moving images with intent.</p>
-    <div class="drawer-text">
-      <p>Evidence Studio is an independent creative practice working across CGI, art direction and sound design. We build moving images that carry weight — deliberate, cinematic, engineered to be remembered.</p>
-      <p>We believe great work leaves a trace. Every frame, every cut, every sound is evidence of intention.</p>
-      <p>We collaborate with brands and founders who understand that motion is not decoration — it is argument.</p>
-    </div>
-    <div class="drawer-contact">
-      <p class="drawer-label">Get in touch</p>
-      <a href="mailto:evidencestudiocontact@gmail.com" data-umami-event="Contact click" data-umami-event-where="about">evidencestudiocontact@gmail.com</a>
-    </div>
-  </div>
-</div>
-
 <script>
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1026,7 +1003,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && caseEl.cla
 function openDrawer(d)  { esEvent('Drawer open', { drawer: d.id.replace('-drawer', '') }); d.classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeDrawers() { document.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open')); document.body.style.overflow = ''; }
 
-document.getElementById('about-trigger').addEventListener('click', e => { e.preventDefault(); closeDrawers(); openDrawer(document.getElementById('about-drawer')); });
+// arriving from the About page with "#services" opens the Services drawer
+if (location.hash === '#services') {
+  openDrawer(document.getElementById('services-drawer'));
+  history.replaceState(history.state, '', location.pathname + location.search);
+}
 document.getElementById('services-trigger').addEventListener('click', e => { e.preventDefault(); closeDrawers(); openDrawer(document.getElementById('services-drawer')); });
 document.querySelectorAll('.drawer-backdrop, .drawer-close').forEach(el => el.addEventListener('click', closeDrawers));
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
