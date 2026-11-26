@@ -466,16 +466,16 @@ function mediaFail(el) {
       <div class="project-fallback" style="display:none;"><span>images/bubbles/bubble-perfume.jpg</span></div>
     </div>
   </article>
-  <article class="project" role="button" tabindex="0" aria-label="Future of Flower Creation"
-    data-slug="future-of-flower-creation" data-ratio="16/9"
+  <article class="project" role="button" tabindex="0" aria-label="Synthetic Bloom"
+    data-slug="synthetic-bloom" data-ratio="16/9"
     data-type="AI Exploration" data-year="2026"
-    data-what="A silicone-like bloom grown in a laboratory — one AI-generated shot, opening from bud to full flower in 4K."
+    data-what="Silicone-like flowers grown, wired and fed in a laboratory — an AI film and image series that follows a bloom from bud to butterfly."
     data-for="Self-initiated — Evidence Studio."
-    data-why="To test how far AI video can go toward a believable, art-directed product look — built from keyframe references, not from prompts alone."
-    data-tools="Higgsfield" data-credits=""
-    data-slides='[{"title": "Future of Flower Creation", "meta": "AI video — 4K", "src": "videos/ai/future-of-flower-creation.mp4", "type": "video"}]'>
+    data-why="To push AI imagery toward a believable, art-directed product look — built from keyframe references and graded by hand, not left to prompts alone."
+    data-tools="Higgsfield · Blender · DaVinci Resolve" data-credits=""
+    data-slides='[{"title": "Synthetic Bloom", "meta": "Film — 4K", "src": "videos/ai/future-of-flower-creation.mp4", "type": "video"}, {"title": "Synthetic Bloom", "meta": "01 — Lily on a vial", "src": "images/synthetic-bloom/sb_01.jpg"}, {"title": "Synthetic Bloom", "meta": "02 — Lily on a lab stand", "src": "images/synthetic-bloom/sb_02.jpg"}, {"title": "Synthetic Bloom", "meta": "03 — The laboratory", "src": "images/synthetic-bloom/sb_03.jpg"}, {"title": "Synthetic Bloom", "meta": "04 — Wired bloom", "src": "images/synthetic-bloom/sb_04.jpg"}, {"title": "Synthetic Bloom", "meta": "05 — Feeding line", "src": "images/synthetic-bloom/sb_05.jpg"}, {"title": "Synthetic Bloom", "meta": "06 — Coupling", "src": "images/synthetic-bloom/sb_06.jpg"}, {"title": "Synthetic Bloom", "meta": "07 — Clamp & bud", "src": "images/synthetic-bloom/sb_07.jpg"}, {"title": "Synthetic Bloom", "meta": "08 — Through the petals", "src": "images/synthetic-bloom/sb_08.jpg"}, {"title": "Synthetic Bloom", "meta": "09 — Petal", "src": "images/synthetic-bloom/sb_09.jpg"}, {"title": "Synthetic Bloom", "meta": "10 — Stamens", "src": "images/synthetic-bloom/sb_10.jpg"}, {"title": "Synthetic Bloom", "meta": "11 — Macro — veins", "src": "images/synthetic-bloom/sb_11.jpg"}, {"title": "Synthetic Bloom", "meta": "12 — Bud on a stem", "src": "images/synthetic-bloom/sb_12.jpg"}, {"title": "Synthetic Bloom", "meta": "13 — Petals in flight", "src": "images/synthetic-bloom/sb_13.jpg"}, {"title": "Synthetic Bloom", "meta": "14 — Metamorphosis I", "src": "images/synthetic-bloom/sb_14.jpg"}, {"title": "Synthetic Bloom", "meta": "15 — Metamorphosis II", "src": "images/synthetic-bloom/sb_15.jpg"}, {"title": "Synthetic Bloom", "meta": "16 — Metamorphosis III", "src": "images/synthetic-bloom/sb_16.jpg"}, {"title": "Synthetic Bloom", "meta": "17 — Metamorphosis IV", "src": "images/synthetic-bloom/sb_17.jpg"}]'>
     <div class="project-media">
-      <img src="images/ai/future-of-flower-creation.jpg" alt="Future of Flower Creation" loading="lazy" onerror="mediaFail(this)">
+      <img src="images/ai/future-of-flower-creation.jpg" alt="Synthetic Bloom" loading="lazy" onerror="mediaFail(this)">
       <video data-src="videos/ai/future-of-flower-creation.mp4" data-src-sm="videos/sm/future-of-flower-creation.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       <div class="project-fallback" style="display:none;"><span>images/ai/future-of-flower-creation.jpg</span></div>
     </div>
@@ -976,7 +976,8 @@ function hideCase() {
   if (cases[currentCase]) cases[currentCase].el.focus({ preventScroll: true });
 }
 
-const slugFromHash = () => location.hash.startsWith('#/') ? decodeURIComponent(location.hash.slice(2)) : '';
+const SLUG_ALIASES = { 'future-of-flower-creation': 'synthetic-bloom' };   // old links keep working
+const slugFromHash = () => { const s = location.hash.startsWith('#/') ? decodeURIComponent(location.hash.slice(2)) : ''; return SLUG_ALIASES[s] || s; };
 const indexOfSlug  = s => cases.findIndex(c => c.slug === s);
 
 function openCase(i) {
